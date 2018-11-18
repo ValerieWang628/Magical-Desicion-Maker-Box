@@ -1,10 +1,8 @@
-# Updated Animation Starter Code
+# This starter code is cited from CMU 15-112: Fundamentals of Programming and Computer Science \
+# Class Notes: Animation Part 2: Time-Based Animations in Tkinter
 
 from tkinter import *
 
-####################################
-# customize these functions
-####################################
 
 def init(data):
     # load data.xyz as appropriate
@@ -25,12 +23,10 @@ def redrawAll(canvas, data):
     # draw in canvas
     pass
 
-def motion(event, data):
+def mouseTracker(event, data):
     x, y = event.x, event.y
-    # print(x, y)
-####################################
-# use the run function as-is
-####################################
+    print(x, y)
+
 
 def run(width=300, height=300):
     def redrawAllWrapper(canvas, data):
@@ -44,8 +40,8 @@ def run(width=300, height=300):
         mousePressed(event, data)
         redrawAllWrapper(canvas, data)
 
-    def motionWrapper(event, data):
-        motion(event, data)
+    def mouseTrackerWrapper(event, data):
+        mouseTracker(event, data)
         redrawAllWrapper(canvas, data)
 
     def keyPressedWrapper(event, canvas, data):
@@ -77,7 +73,7 @@ def run(width=300, height=300):
     root.bind("<Key>", lambda event:
                             keyPressedWrapper(event, canvas, data))
     root.bind("<Motion>", lambda event:
-                            motionWrapper(event, data))  
+                            mouseTrackerWrapper(event, data))  
     timerFiredWrapper(canvas, data)
     # and launch the app
     root.mainloop()  # blocks until window is closed
