@@ -83,3 +83,16 @@ rankMatrix6 = [ [ 3,  3,  2,  2 ],
 # Second round:C,D's vote given A
 # A:7 B:3
 # A wins
+
+# the Borda Count:
+# if preference 4-3-2-1
+# A: 4+1+2+3 = 9
+# B: 3+4+1+2 = 9
+# C: 2+3+4+1 = 9
+# D: 1+2+3+4 = 9
+# final score
+# A: 9 * 3
+# B: 9 * 3
+# C: 9 * 2
+# D: 9 * 2
+# A & B win with a tie
