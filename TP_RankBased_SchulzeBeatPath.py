@@ -218,7 +218,34 @@ print(smithSetFinder(matrix,playerList))
 
 '''
 
+'''
+new viable algorithm:
 
+def smithSetFinder(matrix, playerList):
+    '''this func uses the positive defeat score to eliminate losers
+        to get the winner set -- the smith set '''
+    playerSet = set(playerList)
+    underdogSet, overriderSet, scoreBeatList = underdogOverriderFinder(matrix,playerList)
+    # if overriderSet != set(): return overriderSet
+    playerSet -= underdogSet
+    dominantContainer = []
+    dominantSet = set()
+    tmpSmith = set()
+    playerList = list(playerSet)
+    for i in range(len(playerList)):
+        tmpSmith = set()
+        for player in playerList[i:]:
+            tmpSmith.add(player)
+            print("tmp", tmpSmith)
+            if isDominantSet(tmpSmith,playerSet,scoreBeatList):
+                dominantSet = tmpSmith.copy()
+                dominantContainer.append(dominantSet)
+                print("domin", dominantContainer)
+    return min(dominantContainer, key = len)
+
+
+
+'''
 
    
 
