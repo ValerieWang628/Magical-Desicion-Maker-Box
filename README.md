@@ -64,7 +64,7 @@ Classes might be created in separate python files and later imported in the tkin
 
 For the algorithms, there are already some developed algorithms out there -- such as for finding the smith set, there are  Floyd–Warshall algorithm in time O(n ^ 3), Kosaraju's algorithm and Tarjan's algorithm in time O(n ^ 2).
 
-However, due to the limited complexity of a use's decision, normally, a student/consultant equipped with theoretical algothm knowledge will be able to manually calculated the results on a piece of a scratch paper. Therefore, all the algorithms in this box will be implemented independently by the developer using merely 2-D lists, 2-D dictionary and sets manipulation(no Numpy/Pandas involved). The entire manipulation process striclt recreates how a human being will solve the problem.
+However, due to the limited complexity of a use's decision, normally, a student/consultant equipped with theoretical algothm knowledge will be able to manually calculated the results on a piece of a scratch paper. Therefore, all the algorithms in this box will be implemented independently by the developer using merely 2-D lists, 2-D dictionary and sets manipulation(no Numpy/Pandas involved). The entire manipulation process strictly recreates how a human being will solve the problem.
 
 The trick part will lie in the function building part. Since many methods involve repetitive steps, recursion is definitely going to be used. Therefore, the developer created many test boards with different scenerios for testing purposes. For example, scenerios with equivocal winners, scenerios with Condorcet criterion failure, scenerios with monotonicity criterion failure, scenerios with multiple ties, etc. The algorithms will try their best to cover all the edge cases. 
 
