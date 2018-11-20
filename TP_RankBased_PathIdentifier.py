@@ -10,15 +10,6 @@ Later in the matrix drawing, red identifies negative, while green for positive.
 
 playerList = ['A','B','C','D']
 
-s = set()
-# this is to generate a pairwise set
-# all combinations provided
-for i in range(len(playerList)):
-    for j in range(i+1,len(playerList)):
-        s.add((playerList[i], playerList[j]))
-
-# print(s)
-
 matrix = [  [ 4,  1,  2,  3 ],
             ['A','C','A','C'],
             ['B','B','D','A'],
@@ -26,20 +17,28 @@ matrix = [  [ 4,  1,  2,  3 ],
             ['D','A','C','D']
                                     ]
 
-rows, cols = len(matrix), len(matrix[0])
-l = []
-for pair in s:
-    score = dict.fromkeys(pair, 0)
-    for p in pair:
-        for c in range(cols):
-            for r in range(1,rows):
-                if matrix[r][c] == p:
-                    score[p] += matrix[0][c]
-                    break
-                if matrix[r][c] in pair:
-                    score[matrix[r][c]] += matrix[0][c]
-                    break
-        break
-    l.append(score)
+def pathIdentifier(matrix, playerList):
+    s = set()
+    for i in range(len(playerList)):
+        for j in range(i+1,len(playerList)):
+            s.add((playerList[i], playerList[j]))
+    # this is to generate a pairwise set
+    # all combinations provided
+    rows, cols = len(matrix), len(matrix[0])
+    scoreList = []
+    for pair in s:
+        score = dict.fromkeys(pair, 0)
+        for player in pair:
+            for c in range(cols):
+                for r in range(1,rows):
+                    if matrix[r][c] == player:
+                        score[player] += matrix[0][c]
+                        break
+                    if matrix[r][c] in pair:
+                        score[matrix[r][c]] += matrix[0][c]
+                        break
+            break
+        scoreList.append(score)
+    return scoreList
 
-print(l)
+print(pathIdentifier(matrix, playerList))
