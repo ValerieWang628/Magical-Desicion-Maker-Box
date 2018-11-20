@@ -1,16 +1,55 @@
 '''
-this part is:
-having all the paths identified,
-identify smith set
-and calculate the beat path within the smith set
+------ this the description of Schulze's Beat Path Method in Wikipedia------
+The Schulze method is an electoral system 
+developed in 1997 by Markus Schulze 
+that selects a single winner using votes 
+that express preferences. 
+The method can also be used to create 
+a sorted list of winners. 
+The Schulze method is also known as 
+Schwartz Sequential dropping (SSD), 
+the beatpath method, 
+beatpath winner, 
+path voting, 
+and path winner.
+
+The Schulze method is a Condorcet method, 
+which means that if there is a candidate 
+who is preferred by a majority 
+over every other candidate 
+in pairwise comparisons, 
+then this candidate will be the winner 
+when the Schulze method is applied.
+
+The output of the Schulze method (defined below) 
+gives an ordering of candidates. 
+Therefore, if several positions are available, 
+the method can be used for this purpose without modification, 
+by letting the k top-ranked candidates win the k available seats. 
+Furthermore, for proportional representation elections, 
+a single transferable vote variant has been proposed.
+
+'''
+
+
+'''
+this part of the code is:
+with all the paths identified 
+(note: both directions, such as A beats B by 2, B beats A by 3),
+- calculate the pairwise winners' path strength by the positiveBeatFinder function,
+(note: only one direction, such as B defeats A by 1 (3 - 2 = 1)),
+- identify smith set,
+and 
+- calculate the beat path within the smith set
+- get the final winner
 '''
 import copy
 
 playerList = ['A','B','C','D']
-# this playerList refers to the in-competition players
-# only if the player node was dragged to the playground \
-# will the player show up in the list
-# in this case, assume all players are dragged for complex testing purpose
+# This playerList refers to the in-competition players
+# Only if the player node was dragged to the playground \
+# will the player show up in the list.
+# In this case, assume all players are dragged for complex testing purpose.
 
 matrix = [  [ 4,  1,  2,  3 ],
             ['A','C','A','C'],
@@ -20,7 +59,7 @@ matrix = [  [ 4,  1,  2,  3 ],
                                     ]
 
 def pathIdentifier(matrix, playerList):
-    '''this func is a helper func, calculating all paths,
+    '''This is a helper func, calculating all two-way paths,
        later used in the smithSetFinder func. '''
     combSet = set() # initializing an empty set for all combinations
     for i in range(len(playerList)):
@@ -62,7 +101,6 @@ def positiveBeatFinder(matrix, playerList):
             else: scoreBeat[player] = 0
         scoreBeatList.append(scoreBeat)
     return scoreBeatList
-
 
 def underdogOverriderFinder(matrix,playerList):
     '''this is a helper func to identify the all-time loser, 
@@ -118,7 +156,9 @@ def smithSetFinder(matrix, playerList):
                     print("domin", dominantContainer)
         return min(dominantContainer, key = len)
 
-print(smithSetFinder(matrix,playerList))
+# print(smithSetFinder(matrix,playerList))
+
+
 
 
 
