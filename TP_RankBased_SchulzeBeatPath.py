@@ -1,5 +1,7 @@
 '''
 ------ this the description of Schulze's Beat Path Method in Wikipedia------
+source: https://en.wikipedia.org/wiki/Schulze_method
+
 The Schulze method is an electoral system 
 developed in 1997 by Markus Schulze 
 that selects a single winner using votes 
@@ -31,6 +33,27 @@ a single transferable vote variant has been proposed.
 
 '''
 
+'''
+source: https://en.wikipedia.org/wiki/Smith_set
+
+In voting systems, the Smith set, named after John H. Smith, 
+but also known as the top cycle, or as GETCHA, 
+is the smallest non-empty set of candidates 
+in a particular election such that 
+each member defeats every other candidate 
+outside the set in a pairwise election. 
+The Smith set provides one standard of optimal choice 
+for an election outcome. 
+Voting systems that always elect a candidate 
+from the Smith set 
+pass the Smith criterion 
+and are said to be "Smith-efficient".
+
+A set of candidates where every member of the set 
+pairwise defeats every member outside of the set 
+is known as a dominating set.
+
+'''
 
 '''
 this part of the code is:
@@ -43,6 +66,7 @@ and
 - calculate the beat path within the smith set
 - get the final winner
 '''
+
 import copy
 
 playerList = ['A','B','C','D']
@@ -103,11 +127,11 @@ def positiveBeatFinder(matrix, playerList):
     return scoreBeatList
 
 def underdogOverriderFinder(matrix,playerList):
-    '''this is a helper func to identify the all-time loser, 
+    '''This is a helper func to identify the all-time loser, 
         and all-time winner.
         An all-time loser will never show up in smith set.
         Eliminate underdog first.
-        An all-time winner is the smith set itslf.
+        An all-time winner is the smith set itself.
         Most of the time there might not be an all-time winner and loser.'''
     playerSet = set(playerList)
     scoreBeatList = positiveBeatFinder(matrix,playerList)
@@ -138,7 +162,7 @@ def isDominantSet(tmpSmith, playerSet, scoreBeatList):
 
 def smithSetFinder(matrix, playerList):
     '''this func uses the positive defeat score to eliminate losers
-        to get the winner set -- the smith set '''
+        to get the smallest dominating set, aka: the smith set '''
     playerSet = set(playerList)
     underdogSet, overriderSet, scoreBeatList = underdogOverriderFinder(matrix,playerList)
     if overriderSet != set(): return overriderSet
@@ -150,13 +174,11 @@ def smithSetFinder(matrix, playerList):
             tmpSmith = set()
             for player in playerList[i:]:
                 tmpSmith.add(player)
-                print("tmp", tmpSmith)
                 if isDominantSet(tmpSmith,playerSet,scoreBeatList):
                     dominantContainer.append(tmpSmith.copy())
-                    print("domin", dominantContainer)
         return min(dominantContainer, key = len)
 
-# print(smithSetFinder(matrix,playerList))
+print(smithSetFinder(matrix,playerList))
 
 
 
