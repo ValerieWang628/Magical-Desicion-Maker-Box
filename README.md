@@ -66,7 +66,7 @@ For the algorithms, there are already some developed algorithms out there -- suc
 
 However, due to the limited complexity of a use's decision, normally, a student/consultant equipped with theoretical algothm knowledge will be able to manually calculated the results on a piece of a scratch paper. Therefore, all the algorithms in this box will be implemented independently by the developer using merely 2-D lists, 2-D dictionary and sets manipulation(no Numpy/Pandas involved). The entire manipulation process strictly recreates how a human being will solve the problem.
 
-The trick part will lie in the function building part. Since many methods involve repetitive steps, recursion is definitely going to be used. Therefore, the developer created many test boards with different scenerios for testing purposes. For example, scenerios with equivocal winners, scenerios with Condorcet criterion failure, scenerios with monotonicity criterion failure, scenerios with multiple ties, etc. The algorithms will try their best to cover all the edge cases. 
+The tricky part will lie in the function building part. Since many methods involve repetitive steps, recursion is definitely going to be used. Therefore, the developer created many test boards with different scenerios for testing purposes. For example, scenerios with equivocal winners, scenerios with Condorcet criterion failure, scenerios with monotonicity criterion failure, scenerios with multiple ties, etc. The algorithms will try their best to cover all the edge cases. 
 
 For the user interface, the developer will set sequential stages and modes for the whole GUI(Graphic User Interface) that allows different interaction function to take place such as keyPressed, mouseTracker, mousePressed, etc.
 
