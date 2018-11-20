@@ -126,6 +126,9 @@ def positiveBeatFinder(matrix, playerList):
         scoreBeatList.append(scoreBeat)
     return scoreBeatList
 
+def pairwiseBeatFinder(matrix, playerList)
+
+
 def underdogOverriderFinder(matrix,playerList):
     '''This is a helper func to identify the all-time loser, 
         and all-time winner.
@@ -166,19 +169,32 @@ def smithSetFinder(matrix, playerList):
     playerSet = set(playerList)
     underdogSet, overriderSet, scoreBeatList = underdogOverriderFinder(matrix,playerList)
     if overriderSet != set(): return overriderSet
+    # If there is an ovverrider set,
+    # it must have only one object in the set,
+    # unless there are ties in the set that defeats all outsiders.
+    # The overrider set is the absolute smith set
     else:
         playerSet -= underdogSet
         dominantContainer = []
-        playerList = list(playerSet)
+        playerList = list(playerSet) 
+        # This list differs from the original in-play set 
+        # in that it eliminates underdog. 
+        # Thus reduces unnecessary iterations
         for i in range(len(playerList)):
             tmpSmith = set()
+            # every time the new empty smith set starts from  a player
             for player in playerList[i:]:
+            # this guarantees that the player will never be visited twice
                 tmpSmith.add(player)
                 if isDominantSet(tmpSmith,playerSet,scoreBeatList):
                     dominantContainer.append(tmpSmith.copy())
-        return min(dominantContainer, key = len)
+                    break
+                    # the tmpSmith length grows ascendingly
+                    # so once tmpSmith satisfies a dominating set
+                    # no more player adding is needed
+        return min(dominantContainer, key = len) # get the smallest set
 
-print(smithSetFinder(matrix,playerList))
+# print(smithSetFinder(matrix,playerList))
 
 
 
