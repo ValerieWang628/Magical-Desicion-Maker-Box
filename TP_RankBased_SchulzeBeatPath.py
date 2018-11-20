@@ -70,6 +70,7 @@ and
 import copy
 
 playerList = ['A','B','C','D']
+
 # This playerList refers to the in-competition players
 # Only if the player node was dragged to the playground \
 # will the player show up in the list.
@@ -126,7 +127,8 @@ def positiveBeatFinder(matrix, playerList):
         scoreBeatList.append(scoreBeat)
     return scoreBeatList
 
-def pairwiseBeatFinder(matrix, playerList)
+# def pairwiseBeatFinder(matrix, playerList):
+#     pass
 
 
 def underdogOverriderFinder(matrix,playerList):
@@ -152,11 +154,14 @@ def underdogOverriderFinder(matrix,playerList):
     # so no double calling positiveBeatFinder(matrix,playerList) is needed
 
 def isDominantSet(tmpSmith, playerSet, scoreBeatList):
-    overflowSet = playerSet - tmpSmith
+    '''For every player in a smith-suspicious set,
+        if the player is defeated by players outside the set,
+        this set cannot be Smith set.'''
+    overflowSet = playerSet - tmpSmith # outside the smith-suspicious set
     for scoreBeat in scoreBeatList:
         for player in scoreBeat:
             if (player in tmpSmith
-                and scoreBeat[player] == 0
+                and scoreBeat[player] == 0 # gets defeated
                 and max(scoreBeat, key = scoreBeat.get) in overflowSet):
                 return False
     return True
@@ -182,7 +187,7 @@ def smithSetFinder(matrix, playerList):
         # Thus reduces unnecessary iterations
         for i in range(len(playerList)):
             tmpSmith = set()
-            # every time the new empty smith set starts from  a player
+            # every time the new empty smith set starts from a player
             for player in playerList[i:]:
             # this guarantees that the player will never be visited twice
                 tmpSmith.add(player)
@@ -194,13 +199,5 @@ def smithSetFinder(matrix, playerList):
                     # no more player adding is needed
         return min(dominantContainer, key = len) # get the smallest set
 
-# print(smithSetFinder(matrix,playerList))
-
-
-
-
-
-
-   
-
+print(smithSetFinder(matrix,playerList))
 
