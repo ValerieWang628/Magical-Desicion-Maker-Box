@@ -69,7 +69,9 @@ and
 
 import copy
 
-playerList = ['A','B','C','D']
+# playerList = ['A','B','C','D']
+playerList = ['B','C','D']
+# playerList = ['B']
 
 # This playerList refers to the in-competition players
 # Only if the player node was dragged to the playground \
@@ -112,6 +114,7 @@ def pathIdentifier(matrix, playerList):
 def positiveBeatFinder(matrix, playerList):
     '''this is a helper func to only count the winner in the
         pairwise battle'''
+    if len(playerList) <= 1: raise Exception('Start with at least two players.')
     scoreList, combSet = pathIdentifier(matrix, playerList)
     scoreBeatList = []
     for score in scoreList:
@@ -127,9 +130,8 @@ def positiveBeatFinder(matrix, playerList):
         scoreBeatList.append(scoreBeat)
     return scoreBeatList
 
-# def pairwiseBeatFinder(matrix, playerList):
-#     pass
 
+print(positiveBeatFinder(matrix,playerList))
 
 def underdogOverriderFinder(matrix,playerList):
     '''This is a helper func to identify the all-time loser, 
@@ -198,6 +200,4 @@ def smithSetFinder(matrix, playerList):
                     # so once tmpSmith satisfies a dominating set
                     # no more player adding is needed
         return min(dominantContainer, key = len) # get the smallest set
-
-print(smithSetFinder(matrix,playerList))
 
