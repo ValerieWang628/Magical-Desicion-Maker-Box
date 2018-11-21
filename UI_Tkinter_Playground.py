@@ -14,24 +14,43 @@ def init(data):
     data.margin = 50
     data.mouseMotion = (-1, -1)
     data.mouseSelection = (-1, -1)
+    data.doubleClickSelection = (-1,-1)
     data.playerNode = []
+    data.playerNodeSep = data.height//len(data.playerList)
+    data.sittingPlayerLoc = {}
     loadSittingPlayers(data)
     data.operationButton = []
+    data.buttonNum = 4
+    data.buttonWidth = 160
+    data.buttonSep = (data.width - 4 * data.margin)//data.buttonNum + 30
     loadOperationButton(data)
+    data.playground = None
 
 def loadOperationButton(data):
     horizontalAlign = (2 * data.height - 3 * data.margin)//2 
-    data.operationButton.append(pgWidgets.OperationButton("Show Connections",100, horizontalAlign))
-
+    button1 = pgWidgets.OperationButton("Show Connections", data.margin + data.buttonWidth//2, horizontalAlign, data.buttonWidth)
+    data.operationButton.append(button1)
+    button2 = pgWidgets.OperationButton("Hide Connections", data.margin + data.buttonWidth//2 + data.buttonSep, horizontalAlign, data.buttonWidth)
+    data.operationButton.append(button2)
+    button3 = pgWidgets.OperationButton("Show Smith Set", data.margin + data.buttonWidth//2 + data.buttonSep * 2, horizontalAlign, data.buttonWidth)
+    data.operationButton.append(button3)
+    button4 = pgWidgets.OperationButton("Beatpath Demo", data.margin + data.buttonWidth//2 + data.buttonSep * 3, horizontalAlign, data.buttonWidth)
+    data.operationButton.append(button4)
 
 def loadSittingPlayers(data):
     heightOffset = 1.5 * data.margin
     verticalAlign = ((data.width - 3 * data.margin) + data.width)//2
     for i in range(len(data.playerList)):
-        data.playerNode.append(pgWidgets.PlayerNode(data.playerList[i], verticalAlign, heightOffset + data.margin * i * 2))
+        player = pgWidgets.PlayerNode(data.playerList[i], verticalAlign, heightOffset + i * data.playerNodeSep)
+        data.playerNode.append(player)
+        data.sittingPlayerLoc[player.playerName] = (player.cx, player.cy)
+    print(data.sittingPlayerLoc)
 
 def mousePressed(event, data):
     data.mouseSelection = (event.x, event.y)
+
+def mouseDoublePressed(event, data):
+    data.doubleClickSelection = (event.x, event.y)
 
 def keyPressed(event, data):
     # use event.char and event.keysym
@@ -44,14 +63,19 @@ def drawPlaygroundBG(canvas, data):
     canvas.create_rectangle(0, 0, data.width, data.height, fill = "black")
 
 def drawPlaygroundField(canvas, data):
-    corners = (data.margin, data.margin, data.width - 3 * data.margin, data.height - 3 * data.margin)
-    canvas.create_rectangle(corners, fill = "black", outline = "cyan", width = 3, dash = (7, 10, 1, 1))
+    mouseX, mouseY = data.mouseMotion
+    vertexNW, vertexSE = (data.margin, data.margin), (data.width - 3 * data.margin, data.height - 3 * data.margin)
+    data.playground = pgWidgets.Playground(vertexNW,vertexSE)
+    data.playground.draw(canvas, mouseX, mouseY, 20)
 
 def drawPlayerNode(canvas, data):
     mouseX, mouseY = data.mouseMotion
+    mousePressedX, mousePressedY = data.mouseSelection
+    mouseDoublePressedX, mouseDoublePressedY = data.doubleClickSelection
     for node in data.playerNode:
+        node.ifSingleClicked(canvas, data.playground, mousePressedX, mousePressedY)
+        node.ifDoubleClicked(canvas, data.playground, mouseDoublePressedX, mouseDoublePressedY, data.sittingPlayerLoc)
         node.draw(canvas, mouseX, mouseY)
-        print(node.cx, node.cy)
 
 def drawOperationButton(canvas, data):
     mouseX, mouseY = data.mouseMotion
@@ -77,6 +101,10 @@ def run(width=300, height=300):
 
     def mousePressedWrapper(event, canvas, data):
         mousePressed(event, data)
+        redrawAllWrapper(canvas, data)
+    
+    def mouseDoublePressedWrapper(event, canvas, data):
+        mouseDoublePressed(event, data)
         redrawAllWrapper(canvas, data)
 
     def mouseTrackerWrapper(event, data):
@@ -113,7 +141,8 @@ def run(width=300, height=300):
                             keyPressedWrapper(event, canvas, data))
     root.bind("<Motion>", lambda event:
                             mouseTrackerWrapper(event, data))  
-    # root.bind("<ButtonRelease-1>")
+    root.bind("<Double-Button-1>", lambda event:
+                            mouseDoublePressedWrapper(event, canvas, data))
     timerFiredWrapper(canvas, data)
     # and launch the app
     root.mainloop()  # blocks until window is closed
