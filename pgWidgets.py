@@ -50,7 +50,19 @@ class PlayerNode():
                 and self.cy >= playground.vertexNW[1]
                 and self.cy <= playground.vertexSE[1]):
                 self.cx, self.cy = sittingPlayerLoc[self.playerName]
-                
+
+    def ifDragged(self, canvas, playground, mouseX, mouseY):
+        eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
+        if eucliDist <= self.r:
+            if  (self.cx >= playground.vertexNW[0]
+                and self.cx <= playground.vertexSE[0]
+                and self.cy >= playground.vertexNW[1]
+                and self.cy <= playground.vertexSE[1]):  
+                self.cx, self.cy = mouseX, mouseY   
+                # canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = None, outline = "cyan", width = 1)   
+    
+    def ifReleased(self, canvas, playground, mouseX, mouseY):
+        PlayerNode.ifDragged(self,canvas, playground, mouseX, mouseY)
 
 
 
@@ -98,7 +110,7 @@ class OperationButton():
         self.vertexNW = (self.cx - self.w//2, self.cy - self.h//2)
         self.vertexSE = (self.cx + self.w//2, self.cy + self.h//2)
     
-    def draw(self, canvas, mouseX, mouseY, fill = "black", outline = "cyan"):
+    def draw(self, canvas, mouseX, mouseY, playground = None, fill = "black", outline = "cyan"):
         if (mouseX >= self.vertexNW[0]
              and mouseX <= self.vertexSE[0]
              and mouseY >= self.vertexNW[1]
@@ -106,6 +118,28 @@ class OperationButton():
              fill, outline = outline, fill
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
         canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
+
+class HintButton(OperationButton):
+
+    def __init__(self, prompt, cx, cy, w , h):
+        super().__init__(prompt, cx, cy, w , h)
+    
+    def draw(self, canvas, mouseX, mouseY, playground, fill = "black", outline = "cyan"):
+        if (mouseX >= self.vertexNW[0]
+             and mouseX <= self.vertexSE[0]
+             and mouseY >= self.vertexNW[1]
+             and mouseY <= self.vertexSE[1]):
+            kernelOffset = 20
+            canvas.create_rectangle(playground.vertexNW[0] + kernelOffset, 
+                                        playground.vertexNW[1] + kernelOffset, 
+                                        playground.vertexSE[0] - kernelOffset, 
+                                        playground.vertexSE[1] - kernelOffset,
+                                        fill = fill, outline = outline, width = 3)
+            canvas.create_text((playground.vertexNW[0] + playground.vertexSE[0])//2, 
+                                (playground.vertexNW[1] + playground.vertexSE[1])//2,
+                                text = "PlaceHolder Hint", font = "Helvetica 30 bold", fill = outline)
+        canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
+        canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)                        
 
 
 class Playground():
