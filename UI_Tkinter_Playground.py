@@ -15,6 +15,8 @@ def init(data):
     data.mouseMotion = (-1, -1)
     data.mouseSelection = (-1, -1)
     data.doubleClickSelection = (-1,-1)
+    data.mouseHeldPosition = (-1, -1)
+    data.mouseReleasedPosition = (-1, -1)
     data.playerNode = []
     data.playerNodeSep = data.height//len(data.playerList)
     data.sittingPlayerLoc = {}
@@ -36,6 +38,8 @@ def loadOperationButton(data):
     data.operationButton.append(button3)
     button4 = pgWidgets.OperationButton("Beatpath Demo", data.margin + data.buttonWidth//2 + data.buttonSep * 3, horizontalAlign, data.buttonWidth)
     data.operationButton.append(button4)
+    button5 = pgWidgets.HintButton("Hint", data.margin//2 + 5, data.margin//2 + 5, 40, 40)
+    data.operationButton.append(button5)
 
 def loadSittingPlayers(data):
     heightOffset = 1.5 * data.margin
@@ -51,6 +55,12 @@ def mousePressed(event, data):
 
 def mouseDoublePressed(event, data):
     data.doubleClickSelection = (event.x, event.y)
+
+def mouseHeld(event, data):
+    data.mouseHeldPosition = (event.x, event.y)
+
+def mouseHeldReleased(event, data):
+    data.mouseReleasedPosition = (event.x, event.y)
 
 def keyPressed(event, data):
     # use event.char and event.keysym
@@ -72,15 +82,19 @@ def drawPlayerNode(canvas, data):
     mouseX, mouseY = data.mouseMotion
     mousePressedX, mousePressedY = data.mouseSelection
     mouseDoublePressedX, mouseDoublePressedY = data.doubleClickSelection
+    mouseHeldX, mouseHeldY = data.mouseHeldPosition
+    mouseReleasedX, mouseReleasedY = data.mouseReleasedPosition
     for node in data.playerNode:
         node.ifSingleClicked(canvas, data.playground, mousePressedX, mousePressedY)
         node.ifDoubleClicked(canvas, data.playground, mouseDoublePressedX, mouseDoublePressedY, data.sittingPlayerLoc)
+        node.ifDragged(canvas, data.playground, mouseHeldX, mouseHeldY)
+        # node.ifReleased(canvas, data.playground, mouseReleasedX, mouseReleasedY)
         node.draw(canvas, mouseX, mouseY)
 
 def drawOperationButton(canvas, data):
     mouseX, mouseY = data.mouseMotion
     for button in data.operationButton:
-        button.draw(canvas, mouseX, mouseY)
+        button.draw(canvas, mouseX, mouseY, data.playground)
 
 def redrawAll(canvas, data):
     drawPlaygroundBG(canvas, data)
@@ -105,6 +119,14 @@ def run(width=300, height=300):
     
     def mouseDoublePressedWrapper(event, canvas, data):
         mouseDoublePressed(event, data)
+        redrawAllWrapper(canvas, data)
+    
+    def mouseHeldWrapper(event, canvas, data):
+        mouseHeld(event, data)
+        redrawAllWrapper(canvas, data)
+    
+    def mouseHeldReleasedWrapper(event, canvas, data):
+        mouseHeldReleased(event, data)
         redrawAllWrapper(canvas, data)
 
     def mouseTrackerWrapper(event, data):
@@ -143,6 +165,10 @@ def run(width=300, height=300):
                             mouseTrackerWrapper(event, data))  
     root.bind("<Double-Button-1>", lambda event:
                             mouseDoublePressedWrapper(event, canvas, data))
+    root.bind("<B1-Motion>", lambda event:
+                            mouseHeldWrapper(event, canvas, data))
+    root.bind("<ButtonRelease-1>", lambda event:
+                            mouseHeldReleasedWrapper(event, canvas, data))                        
     timerFiredWrapper(canvas, data)
     # and launch the app
     root.mainloop()  # blocks until window is closed
