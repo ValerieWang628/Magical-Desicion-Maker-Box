@@ -6,6 +6,7 @@ Later, the drag and drop, node resize, etc. will be implemented.
 
 This file will be imported in the UI_Tkinter_Playground file.
 '''
+import random
 
 class PlayerNode():
 
@@ -14,20 +15,45 @@ class PlayerNode():
         self.cx = cx
         self.cy = cy
         self.r = r
+
+    def draw(self, canvas, mouseX, mouseY, fill = "black", outline = "cyan"):
+        self.vertexNW = (self.cx - self.r, self.cy - self.r)
+        self.vertexSE = (self.cx + self.r, self.cy + self.r)
         self.borderN = (self.cx, self.cy - self.r)
         self.borderS = (self.cx, self.cy + self.r)
         self.borderW = (self.cx - self.r, self.cy)
         self.borderE = (self.cx + self.r, self.cy)
-        self.vertexNW = (self.cx - self.r, self.cy - self.r)
-        self.vertexSE = (self.cx + self.r, self.cy + self.r)
-    
-    def draw(self, canvas, mouseX, mouseY, fill = "black", outline = "cyan"):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
         if eucliDist <= self.r:
             fill, outline = outline, fill
         canvas.create_oval(self.vertexNW, self.vertexSE, fill = fill, width = 3, outline = outline)
         canvas.create_text(self.cx, self.cy, text = self.playerName, fill = outline, font = "Helvetica 20 bold")
     
+    def ifSingleClicked(self, canvas, playground, mouseX, mouseY):
+        eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
+        if eucliDist <= self.r:
+            if  (self.cx >= playground.vertexNW[0]
+                and self.cx <= playground.vertexSE[0]
+                and self.cy >= playground.vertexNW[1]
+                and self.cy <= playground.vertexSE[1]):
+                canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = None, outline = "cyan", width = 1)
+            else:
+                innerOffset = 50
+                self.cx = random.randint(playground.vertexNW[0] + innerOffset, playground.vertexSE[0] - innerOffset)
+                self.cy = random.randint(playground.vertexNW[1] + innerOffset ,playground.vertexSE[1] - innerOffset)
+
+    def ifDoubleClicked(self, canvas, playground, mouseX, mouseY, sittingPlayerLoc):
+        eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
+        if eucliDist <= self.r:
+            if  (self.cx >= playground.vertexNW[0]
+                and self.cx <= playground.vertexSE[0]
+                and self.cy >= playground.vertexNW[1]
+                and self.cy <= playground.vertexSE[1]):
+                self.cx, self.cy = sittingPlayerLoc[self.playerName]
+                
+
+
+
     def __eq__(self, other):
         return (isinstance(other, PlayerNode) and self.playerName == other.playerName)
 
@@ -63,7 +89,7 @@ class BeatNode():
 
 class OperationButton():
 
-    def __init__(self, prompt, cx, cy, w = 160, h = 50):
+    def __init__(self, prompt, cx, cy, w , h = 50):
         self.prompt = prompt
         self.cx = cx
         self.cy = cy
@@ -80,3 +106,25 @@ class OperationButton():
              fill, outline = outline, fill
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
         canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
+
+
+class Playground():
+
+    def __init__(self, vertexNW, vertexSE):
+        self.vertexNW = vertexNW
+        self.vertexSE = vertexSE
+        self.w = self.vertexSE[0] - self.vertexNW[0]
+        self.h = self.vertexSE[1] - self.vertexNW[1]
+
+    
+    def draw(self, canvas, mouseX, mouseY, hightlightMargin, fill = "black", outline = "cyan"):
+        if ((mouseX >= self.vertexNW[0] - hightlightMargin
+            and mouseX <= self.vertexNW[0] + hightlightMargin)
+            or (mouseX >= self.vertexSE[0] - hightlightMargin
+            and mouseX <= self.vertexSE[0] + hightlightMargin)
+            or (mouseY >= self.vertexNW[1] - hightlightMargin
+            and mouseY <= self.vertexNW[1] + hightlightMargin)
+            or (mouseY >= self.vertexSE[1] - hightlightMargin
+            and mouseY <= self.vertexSE[1] + hightlightMargin)):
+            outline = "white"
+        canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3, dash = (7, 10, 1, 1))
