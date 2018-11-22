@@ -29,7 +29,7 @@ class PlayerNode():
         canvas.create_oval(self.vertexNW, self.vertexSE, fill = fill, width = 3, outline = outline)
         canvas.create_text(self.cx, self.cy, text = self.playerName, fill = outline, font = "Helvetica 20 bold")
     
-    def ifSingleClicked(self, canvas, playground, mouseX, mouseY):
+    def ifSingleClicked(self, canvas, playground, mouseX, mouseY, inPlayList):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
         if eucliDist <= self.r:
             if  (self.cx >= playground.vertexNW[0]
@@ -41,8 +41,9 @@ class PlayerNode():
                 innerOffset = 50
                 self.cx = random.randint(playground.vertexNW[0] + innerOffset, playground.vertexSE[0] - innerOffset)
                 self.cy = random.randint(playground.vertexNW[1] + innerOffset ,playground.vertexSE[1] - innerOffset)
+                inPlayList.append(self.playerName)
 
-    def ifDoubleClicked(self, canvas, playground, mouseX, mouseY, sittingPlayerLoc):
+    def ifDoubleClicked(self, canvas, playground, mouseX, mouseY, sittingPlayerLoc, inPlayList):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
         if eucliDist <= self.r:
             if  (self.cx >= playground.vertexNW[0]
@@ -50,6 +51,7 @@ class PlayerNode():
                 and self.cy >= playground.vertexNW[1]
                 and self.cy <= playground.vertexSE[1]):
                 self.cx, self.cy = sittingPlayerLoc[self.playerName]
+                inPlayList.remove(self.playerName)
 
     def ifDragged(self, canvas, playground, mouseX, mouseY):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
@@ -58,16 +60,23 @@ class PlayerNode():
                 and self.cx <= playground.vertexSE[0]
                 and self.cy >= playground.vertexNW[1]
                 and self.cy <= playground.vertexSE[1]):  
-                self.cx, self.cy = mouseX, mouseY   
-                # canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = None, outline = "cyan", width = 1)   
+                self.cx, self.cy = mouseX, mouseY     
     
     def ifReleased(self, canvas, playground, mouseX, mouseY):
         PlayerNode.ifDragged(self,canvas, playground, mouseX, mouseY)
 
+    
+    def safeDistance(self, other, safeDist = 10):
+        if (isinstance(other, PlayerNode)
+            or isinstance(other, BeatNode)):
+            eucliDist = ((other.cx - self.cx) ** 2 + (other.cx - self.cy) ** 2) ** 0.5
+            while eucliDist <= self.r + other.r:
+                self.cx += safeDist
+                self.cy += safeDist
 
 
     def __eq__(self, other):
-        return (isinstance(other, PlayerNode) and self.playerName == other.playerName)
+        return (str(other) == self.playerName)
 
     def getHashables(self):
         return (self.playerName, self.cx, self.cy, self.r)
@@ -86,10 +95,10 @@ class Path():
 
 class BeatNode():
 
-    def __init__(self, cx, cy, s, num):
+    def __init__(self, cx, cy, r, num):
         self.cx = cx
         self.cy = cy
-        self.s = s
+        self.r = r
         self.num = num
         self.vertexNW = (self.cx - self.s, self.cy - self.s)
         self.vertexSE = (self.cx + self.s, self.cy + self.s)
