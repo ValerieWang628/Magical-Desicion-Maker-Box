@@ -11,12 +11,12 @@ from tkinter import *
 
 def init(data):
     data.playerList = ['A','B','C','D']
+    data.inPlayList = []
     data.margin = 50
     data.mouseMotion = (-1, -1)
     data.mouseSelection = (-1, -1)
     data.doubleClickSelection = (-1,-1)
     data.mouseHeldPosition = (-1, -1)
-    data.mouseReleasedPosition = (-1, -1)
     data.playerNode = []
     data.playerNodeSep = data.height//len(data.playerList)
     data.sittingPlayerLoc = {}
@@ -60,7 +60,7 @@ def mouseHeld(event, data):
     data.mouseHeldPosition = (event.x, event.y)
 
 def mouseHeldReleased(event, data):
-    data.mouseReleasedPosition = (event.x, event.y)
+    pass
 
 def keyPressed(event, data):
     # use event.char and event.keysym
@@ -83,12 +83,12 @@ def drawPlayerNode(canvas, data):
     mousePressedX, mousePressedY = data.mouseSelection
     mouseDoublePressedX, mouseDoublePressedY = data.doubleClickSelection
     mouseHeldX, mouseHeldY = data.mouseHeldPosition
-    mouseReleasedX, mouseReleasedY = data.mouseReleasedPosition
+    for i in range(len(data.playerNode)-1):
+        data.playerNode[i].safeDistance(data.playerNode[i+1])
     for node in data.playerNode:
-        node.ifSingleClicked(canvas, data.playground, mousePressedX, mousePressedY)
-        node.ifDoubleClicked(canvas, data.playground, mouseDoublePressedX, mouseDoublePressedY, data.sittingPlayerLoc)
+        node.ifSingleClicked(canvas, data.playground, mousePressedX, mousePressedY, data.inPlayList)
+        node.ifDoubleClicked(canvas, data.playground, mouseDoublePressedX, mouseDoublePressedY, data.sittingPlayerLoc, data.inPlayList)
         node.ifDragged(canvas, data.playground, mouseHeldX, mouseHeldY)
-        # node.ifReleased(canvas, data.playground, mouseReleasedX, mouseReleasedY)
         node.draw(canvas, mouseX, mouseY)
 
 def drawOperationButton(canvas, data):
