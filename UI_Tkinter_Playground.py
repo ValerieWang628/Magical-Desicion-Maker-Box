@@ -12,7 +12,7 @@ from tkinter import *
 
 def init(data):
     data.playerList = ['A','B','C','D']
-    data.beatScoreList = [{'B': 2, 'C': 0}, {'A': 8, 'B': 0}, {'A': 8, 'D': 0}, {'C': 6, 'D': 0}, {'A': 2, 'C': 0}, {'B': 6, 'D': 0}]
+    data.beatScoreList = [{'A': 6, 'C': 4}, {'B': 8, 'D': 2}, {'B': 6, 'C': 4}, {'A': 9, 'D': 1}, {'A': 9, 'B': 1}, {'C': 8, 'D': 2}]
     data.inPlayList = []
     data.margin = 50
     data.mouseMotion = (-1, -1)
