@@ -1,5 +1,6 @@
 
 import pgWidgets
+from collections import deque
 
 '''
 This file is the main GUI file for the playground interaction.
@@ -16,7 +17,7 @@ def init(data):
     data.margin = 50
     data.mouseMotion = (-1, -1)
     data.mouseSelection = (-1, -1)
-    data.mouseSelectionHist = []
+    data.mouseSelectionHist = deque(maxlen = 1)
     data.doubleClickSelection = (-1,-1)
     data.mouseHeldPosition = (-1, -1)
     data.playerNode = []
@@ -24,7 +25,6 @@ def init(data):
     data.sittingPlayerLoc = {}
     loadSittingPlayers(data)
     data.operationButton = []
-    data.nodeConnection = set()
     data.buttonNum = 4
     data.buttonWidth = 160
     data.buttonSep = (data.width - 4 * data.margin)//data.buttonNum + 30
@@ -95,7 +95,7 @@ def drawOperationButton(canvas, data):
     mouseX, mouseY = data.mouseMotion
     mousePressedX, mousePressedY = data.mouseSelection
     for button in data.operationButton:
-        button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.beatScoreList, data.playerNode, data.inPlayList, data.nodeConnection, data.playground)
+        button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.beatScoreList, data.playerNode, data.inPlayList, data.playground)
         button.draw(canvas, mouseX, mouseY, data.playground)
 
 
