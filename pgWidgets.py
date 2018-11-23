@@ -7,6 +7,7 @@ Later, the drag and drop, node resize, etc. will be implemented.
 This file will be imported in the UI_Tkinter_Playground file.
 '''
 import random
+import math
 
 class PlayerNode():
 
@@ -16,6 +17,10 @@ class PlayerNode():
         self.cy = cy
         self.r = r
 
+    def __eq__(self, other):
+        return (isinstance(other, PlayerNode)
+                and self.playerName == other.playerName)
+
     def draw(self, canvas, mouseX, mouseY, fill = "black", outline = "cyan"):
         self.vertexNW = (self.cx - self.r, self.cy - self.r)
         self.vertexSE = (self.cx + self.r, self.cy + self.r)
@@ -23,13 +28,41 @@ class PlayerNode():
         self.borderS = (self.cx, self.cy + self.r)
         self.borderW = (self.cx - self.r, self.cy)
         self.borderE = (self.cx + self.r, self.cy)
+        self.borderNE = (self.cx + (self.r) * math.cos(math.pi/4), self.cy - (self.r) * math.sin(math.pi/4))
+        self.borderSE = (self.cx + (self.r) * math.cos(math.pi/4), self.cy + (self.r) * math.sin(math.pi/4))
+        self.borderNW = (self.cx - (self.r) * math.cos(math.pi/4), self.cy - (self.r) * math.sin(math.pi/4))
+        self.borderSW = (self.cx + (self.r) * math.cos(math.pi/4), self.cy + (self.r) * math.sin(math.pi/4))
+        self.connector = [self.borderE, self.borderN, self.borderS, self.borderW, self.borderNE, self.borderNW, self.borderSE, self.borderSW]
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
         if eucliDist <= self.r:
             fill, outline = outline, fill
         canvas.create_oval(self.vertexNW, self.vertexSE, fill = fill, width = 3, outline = outline)
         canvas.create_text(self.cx, self.cy, text = self.playerName, fill = outline, font = "Helvetica 20 bold")
     
-    def ifSingleClicked(self, canvas, playground, mouseX, mouseY, inPlayList):
+    def showConnection(self, other, canvas, nodeConnection, playground):
+        assert(type(other) == PlayerNode)
+        bestConnect = None
+        shortestConnection = 10000 #magic num
+        for pointSelf in self.connector:
+            for pointOther in other.connector:
+                eucliDist = ((pointSelf[0] - pointOther[0]) ** 2 + (pointSelf[1] - pointOther[1]) ** 2) ** 0.5
+                if eucliDist <= shortestConnection:
+                    shortestConnection = eucliDist
+                    bestConnect = (pointSelf, pointOther)
+        if (bestConnect[0][0] >= playground.vertexNW[0]
+            and bestConnect[0][0] <= playground.vertexSE[0]
+            and bestConnect[1][0] >= playground.vertexNW[0]
+            and bestConnect[1][0] <= playground.vertexSE[0]
+            and bestConnect[0][1] >= playground.vertexNW[1]
+            and bestConnect[0][1] <= playground.vertexSE[1]
+            and bestConnect[1][1] >= playground.vertexNW[1]
+            and bestConnect[1][1] <= playground.vertexSE[1]):
+            connectionPath = Path(bestConnect[0], bestConnect[1])
+            connectionPath.draw(canvas)
+
+            
+    
+    def ifSingleClicked(self, canvas, playground, mouseX, mouseY, inPlayList, mouseSelectionHist):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
         if eucliDist <= self.r:
             if  (self.cx >= playground.vertexNW[0]
@@ -37,11 +70,12 @@ class PlayerNode():
                 and self.cy >= playground.vertexNW[1]
                 and self.cy <= playground.vertexSE[1]):
                 canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = None, outline = "cyan", width = 1)
+                mouseSelectionHist.append(self)
             else:
                 innerOffset = 50
                 self.cx = random.randint(playground.vertexNW[0] + innerOffset, playground.vertexSE[0] - innerOffset)
                 self.cy = random.randint(playground.vertexNW[1] + innerOffset ,playground.vertexSE[1] - innerOffset)
-                inPlayList.append(self.playerName)
+                inPlayList.append(self)
 
     def ifDoubleClicked(self, canvas, playground, mouseX, mouseY, sittingPlayerLoc, inPlayList):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
@@ -51,7 +85,7 @@ class PlayerNode():
                 and self.cy >= playground.vertexNW[1]
                 and self.cy <= playground.vertexSE[1]):
                 self.cx, self.cy = sittingPlayerLoc[self.playerName]
-                inPlayList.remove(self.playerName)
+                inPlayList.remove(self)
 
     def ifDragged(self, canvas, playground, mouseX, mouseY):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
@@ -65,18 +99,6 @@ class PlayerNode():
     def ifReleased(self, canvas, playground, mouseX, mouseY):
         PlayerNode.ifDragged(self,canvas, playground, mouseX, mouseY)
 
-    
-    def safeDistance(self, other, safeDist = 10):
-        if (isinstance(other, PlayerNode)
-            or isinstance(other, BeatNode)):
-            eucliDist = ((other.cx - self.cx) ** 2 + (other.cx - self.cy) ** 2) ** 0.5
-            while eucliDist <= self.r + other.r:
-                self.cx += safeDist
-                self.cy += safeDist
-
-
-    def __eq__(self, other):
-        return (str(other) == self.playerName)
 
     def getHashables(self):
         return (self.playerName, self.cx, self.cy, self.r)
@@ -91,7 +113,19 @@ class Path():
         self.dest = dest
     
     def draw(self, canvas):
-        canvas.create_line(self.dep, self.dest, fill = "cyan", width = 5, arrow = LAST, arrowshape = (20,20,5))
+        # canvas.create_line(self.dep, self.dest, fill = "cyan", width = 5, arrow = FIRST, arrowshape = (20,20,5))
+        canvas.create_line(self.dep, self.dest, fill = "cyan", width = 3)
+    
+    def __eq__(self, other):
+        return (isinstance(other, Path) 
+                and ((self.dep == other.dep and self.dest == other.dest) 
+                or (self.dep == other.dest and self.dest == other.dep)))
+    
+    def __hash__(self):
+        return hash(self.getHashables())
+    
+    def getHashables(self):
+        return (self.dep, self.dest)
 
 class BeatNode():
 
@@ -127,6 +161,33 @@ class OperationButton():
              fill, outline = outline, fill
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
         canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
+
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, nodeConnectionList, playground):
+        pass
+
+class ShowConnectionButton(OperationButton):
+
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, nodeConnection, playground):
+        if (mouseX >= self.vertexNW[0]
+            and mouseX <= self.vertexSE[0]
+            and mouseY >= self.vertexNW[1]
+            and mouseY <= self.vertexSE[1]):
+            if mouseSelectionHist == []:
+                print("Please Select a player!")
+            elif len(inPlayList) < 2:
+                print("Please Drag at Least Two Players to the Playground!")
+            else:
+                for score in beatScoreList:
+                    selectedPlayer = mouseSelectionHist[-1]
+                    if selectedPlayer.playerName in score:
+                        pairWisePlayer = list(score.keys())
+                        pairWisePlayer.remove(selectedPlayer.playerName)
+                        theOtherPlayer = pairWisePlayer[0]
+                        for player in playerNodeList:
+                            if player.playerName == theOtherPlayer:
+                                theOtherPlayer = player
+                        selectedPlayer.showConnection(theOtherPlayer, canvas, nodeConnection, playground)
+
 
 class HintButton(OperationButton):
 
