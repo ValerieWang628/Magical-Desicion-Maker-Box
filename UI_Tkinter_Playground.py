@@ -1,5 +1,6 @@
 
 import pgWidgets
+import schulzeBeat
 from collections import deque
 
 '''
@@ -35,7 +36,7 @@ def loadOperationButton(data):
     data.operationButton.append(button1)
     button2 = pgWidgets.ShowConnectionButton("Show Two-Way Path", data.margin + data.buttonWidth//2 + data.buttonSep, horizontalAlign, data.buttonWidth)
     data.operationButton.append(button2)
-    button3 = pgWidgets.OperationButton("Show Smith Set", data.margin + data.buttonWidth//2 + data.buttonSep * 2, horizontalAlign, data.buttonWidth)
+    button3 = pgWidgets.SmithSetFinderButton("Show Smith Set", data.margin + data.buttonWidth//2 + data.buttonSep * 2, horizontalAlign, data.buttonWidth)
     data.operationButton.append(button3)
     button4 = pgWidgets.OperationButton("Beatpath Demo", data.margin + data.buttonWidth//2 + data.buttonSep * 3, horizontalAlign, data.buttonWidth)
     data.operationButton.append(button4)
@@ -106,7 +107,7 @@ def redrawAll(canvas, data):
 def mouseTracker(event, data):
     data.mouseMotion = (event.x, event.y)
 
-def run(width=300, height=300):
+def run(width, height, matrix, playerList):
     def redrawAllWrapper(canvas, data):
         canvas.delete(ALL)
         canvas.create_rectangle(0, 0, data.width, data.height,
@@ -149,8 +150,9 @@ def run(width=300, height=300):
     data.width = width
     data.height = height
     data.timerDelay = 100 # milliseconds
-    data.playerList = ['A','B','C','D']
-    data.beatScoreList = [{'A': 6, 'C': 4}, {'B': 8, 'D': 2}, {'B': 6, 'C': 4}, {'A': 9, 'D': 1}, {'A': 9, 'B': 1}, {'C': 8, 'D': 2}]
+    data.playerList = playerList
+    data.matrix = matrix
+    data.beatScoreList = schulzeBeat.PathIdentifier().pathIdentifier(data.matrix, data.playerList)
     root = Tk()
     root.title("Magic Desicion Maker Box")
     root.resizable(width=False, height=False) # prevents resizing window
@@ -177,4 +179,14 @@ def run(width=300, height=300):
     root.mainloop()  # blocks until window is closed
     print("bye!")
 
-run(1200, 800)
+
+
+matrix = [  [ 4,  1,  2,  3 ],
+            ['A','C','A','C'],
+            ['B','B','D','A'],
+            ['C','D','B','B'],
+            ['D','A','C','D']]
+
+playerList = ['A','B','C','D']
+
+run(1200, 800, matrix, playerList)
