@@ -196,6 +196,16 @@ class OperationButton():
     def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground):
         pass
 
+
+class SmithSetFinderButton(OperationButton):
+
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground):
+        if (mouseX >= self.vertexNW[0]
+             and mouseX <= self.vertexSE[0]
+             and mouseY >= self.vertexNW[1]
+             and mouseY <= self.vertexSE[1]):
+             pass
+
 class ShowConnectionButton(OperationButton):
 
     def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground):
