@@ -40,7 +40,7 @@ class PlayerNode():
         canvas.create_oval(self.vertexNW, self.vertexSE, fill = fill, width = 3, outline = outline)
         canvas.create_text(self.cx, self.cy, text = self.playerName, fill = outline, font = "Helvetica 20 bold")
     
-    def showConnection(self, other, canvas, playground):
+    def showConnection(self, other, canvas, playground, scoreDict):
         assert(type(other) == PlayerNode)
         bestConnect = None
         shortestConnection = 10000 #magic num
@@ -60,6 +60,8 @@ class PlayerNode():
             and bestConnect[1][1] <= playground.vertexSE[1]):
             connectionPath = Path(bestConnect[0], bestConnect[1])
             connectionPath.draw(canvas)
+            beatScore = BeatNode((bestConnect[0][0]+bestConnect[1][0])//2, (bestConnect[0][1]+bestConnect[1][1])//2, scoreDict[self.playerName]) 
+            beatScore.draw(canvas)
 
             
     
@@ -77,8 +79,7 @@ class PlayerNode():
                 self.cx = random.randint(playground.vertexNW[0] + innerOffset, playground.vertexSE[0] - innerOffset)
                 self.cy = random.randint(playground.vertexNW[1] + innerOffset ,playground.vertexSE[1] - innerOffset)
                 inPlayList.append(self)
-        else:
-            pass
+
 
     def ifDoubleClicked(self, canvas, playground, mouseX, mouseY, sittingPlayerLoc, inPlayList):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
@@ -116,8 +117,7 @@ class Path():
         self.dest = dest
     
     def draw(self, canvas):
-        # canvas.create_line(self.dep, self.dest, fill = "cyan", width = 5, arrow = FIRST, arrowshape = (20,20,5))
-        canvas.create_line(self.dep, self.dest, fill = "cyan", width = 3)
+        canvas.create_line(self.dep, self.dest, fill = "cyan", width = 3, arrow= "last", arrowshape = (20,20,5))
     
     def __eq__(self, other):
         return (isinstance(other, Path) 
@@ -132,17 +132,17 @@ class Path():
 
 class BeatNode():
 
-    def __init__(self, cx, cy, r, num):
+    def __init__(self, cx, cy, num, r = 20):
         self.cx = cx
         self.cy = cy
         self.r = r
         self.num = num
-        self.vertexNW = (self.cx - self.s, self.cy - self.s)
-        self.vertexSE = (self.cx + self.s, self.cy + self.s)
+        self.vertexNW = (self.cx - self.r, self.cy - self.r)
+        self.vertexSE = (self.cx + self.r, self.cy + self.r)
     
     def draw(self, canvas):
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = "black", outline = "cyan", width = 2)
-        canvas.create_text(self.cx, self.cy, text = str(self.num), fill = "cyan")
+        canvas.create_text(self.cx, self.cy, text = str(self.num), fill = "cyan", font = "Helvetica 20 bold")
 
 
 class OperationButton():
@@ -193,7 +193,7 @@ class ShowConnectionButton(OperationButton):
                         for player in playerNodeList:
                             if player.playerName == theOtherPlayer:
                                 theOtherPlayer = player
-                        selectedPlayer.showConnection(theOtherPlayer, canvas, playground)
+                        selectedPlayer.showConnection(theOtherPlayer, canvas, playground, score)
                         ErrorPrompt("Now You Are Looking at All BeatPaths Departed from %s." % selectedPlayer.playerName).draw(canvas)
 
 class ErrorPrompt():
