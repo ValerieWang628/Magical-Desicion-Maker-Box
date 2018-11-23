@@ -11,10 +11,12 @@ from tkinter import *
 
 def init(data):
     data.playerList = ['A','B','C','D']
+    data.beatScoreList = [{'B': 2, 'C': 0}, {'A': 8, 'B': 0}, {'A': 8, 'D': 0}, {'C': 6, 'D': 0}, {'A': 2, 'C': 0}, {'B': 6, 'D': 0}]
     data.inPlayList = []
     data.margin = 50
     data.mouseMotion = (-1, -1)
     data.mouseSelection = (-1, -1)
+    data.mouseSelectionHist = []
     data.doubleClickSelection = (-1,-1)
     data.mouseHeldPosition = (-1, -1)
     data.playerNode = []
@@ -22,6 +24,7 @@ def init(data):
     data.sittingPlayerLoc = {}
     loadSittingPlayers(data)
     data.operationButton = []
+    data.nodeConnection = set()
     data.buttonNum = 4
     data.buttonWidth = 160
     data.buttonSep = (data.width - 4 * data.margin)//data.buttonNum + 30
@@ -30,7 +33,7 @@ def init(data):
 
 def loadOperationButton(data):
     horizontalAlign = (2 * data.height - 3 * data.margin)//2 
-    button1 = pgWidgets.OperationButton("Show Connections", data.margin + data.buttonWidth//2, horizontalAlign, data.buttonWidth)
+    button1 = pgWidgets.ShowConnectionButton("Show Connections", data.margin + data.buttonWidth//2, horizontalAlign, data.buttonWidth)
     data.operationButton.append(button1)
     button2 = pgWidgets.OperationButton("Hide Connections", data.margin + data.buttonWidth//2 + data.buttonSep, horizontalAlign, data.buttonWidth)
     data.operationButton.append(button2)
@@ -48,7 +51,6 @@ def loadSittingPlayers(data):
         player = pgWidgets.PlayerNode(data.playerList[i], verticalAlign, heightOffset + i * data.playerNodeSep)
         data.playerNode.append(player)
         data.sittingPlayerLoc[player.playerName] = (player.cx, player.cy)
-    print(data.sittingPlayerLoc)
 
 def mousePressed(event, data):
     data.mouseSelection = (event.x, event.y)
@@ -83,18 +85,19 @@ def drawPlayerNode(canvas, data):
     mousePressedX, mousePressedY = data.mouseSelection
     mouseDoublePressedX, mouseDoublePressedY = data.doubleClickSelection
     mouseHeldX, mouseHeldY = data.mouseHeldPosition
-    for i in range(len(data.playerNode)-1):
-        data.playerNode[i].safeDistance(data.playerNode[i+1])
     for node in data.playerNode:
-        node.ifSingleClicked(canvas, data.playground, mousePressedX, mousePressedY, data.inPlayList)
+        node.ifSingleClicked(canvas, data.playground, mousePressedX, mousePressedY, data.inPlayList, data.mouseSelectionHist)
         node.ifDoubleClicked(canvas, data.playground, mouseDoublePressedX, mouseDoublePressedY, data.sittingPlayerLoc, data.inPlayList)
         node.ifDragged(canvas, data.playground, mouseHeldX, mouseHeldY)
         node.draw(canvas, mouseX, mouseY)
 
 def drawOperationButton(canvas, data):
     mouseX, mouseY = data.mouseMotion
+    mousePressedX, mousePressedY = data.mouseSelection
     for button in data.operationButton:
+        button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.beatScoreList, data.playerNode, data.inPlayList, data.nodeConnection, data.playground)
         button.draw(canvas, mouseX, mouseY, data.playground)
+
 
 def redrawAll(canvas, data):
     drawPlaygroundBG(canvas, data)
