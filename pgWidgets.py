@@ -8,6 +8,7 @@ This file will be imported in the UI_Tkinter_Playground file.
 '''
 import random
 import math
+from collections import deque
 
 class PlayerNode():
 
@@ -39,7 +40,7 @@ class PlayerNode():
         canvas.create_oval(self.vertexNW, self.vertexSE, fill = fill, width = 3, outline = outline)
         canvas.create_text(self.cx, self.cy, text = self.playerName, fill = outline, font = "Helvetica 20 bold")
     
-    def showConnection(self, other, canvas, nodeConnection, playground):
+    def showConnection(self, other, canvas, playground):
         assert(type(other) == PlayerNode)
         bestConnect = None
         shortestConnection = 10000 #magic num
@@ -76,6 +77,8 @@ class PlayerNode():
                 self.cx = random.randint(playground.vertexNW[0] + innerOffset, playground.vertexSE[0] - innerOffset)
                 self.cy = random.randint(playground.vertexNW[1] + innerOffset ,playground.vertexSE[1] - innerOffset)
                 inPlayList.append(self)
+        else:
+            pass
 
     def ifDoubleClicked(self, canvas, playground, mouseX, mouseY, sittingPlayerLoc, inPlayList):
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
@@ -162,20 +165,24 @@ class OperationButton():
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
         canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, nodeConnectionList, playground):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground):
         pass
 
 class ShowConnectionButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, nodeConnection, playground):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground):
         if (mouseX >= self.vertexNW[0]
             and mouseX <= self.vertexSE[0]
             and mouseY >= self.vertexNW[1]
             and mouseY <= self.vertexSE[1]):
-            if mouseSelectionHist == []:
-                print("Please Select a player!")
+            if (mouseSelectionHist == deque(maxlen = 1) 
+                and inPlayList == []):
+                ErrorPrompt("Please First Add a Player.").draw(canvas)
+            elif (mouseSelectionHist == deque(maxlen = 1) 
+                and inPlayList != []):
+                ErrorPrompt("Please First Select a Player by Clicking on It.").draw(canvas)
             elif len(inPlayList) < 2:
-                print("Please Drag at Least Two Players to the Playground!")
+                ErrorPrompt("Please Drag at Least Two Players to the Playground.").draw(canvas)
             else:
                 for score in beatScoreList:
                     selectedPlayer = mouseSelectionHist[-1]
@@ -186,7 +193,18 @@ class ShowConnectionButton(OperationButton):
                         for player in playerNodeList:
                             if player.playerName == theOtherPlayer:
                                 theOtherPlayer = player
-                        selectedPlayer.showConnection(theOtherPlayer, canvas, nodeConnection, playground)
+                        selectedPlayer.showConnection(theOtherPlayer, canvas, playground)
+                        ErrorPrompt("Now You Are Looking at All BeatPaths Departed from %s." % selectedPlayer.playerName).draw(canvas)
+
+class ErrorPrompt():
+
+    def __init__(self, prompt, cx = 550, cy = 25):
+        self.prompt = prompt
+        self.cx = cx
+        self.cy = cy
+ 
+    def draw(self, canvas, fill = "black", outline = "cyan"):
+        canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
 
 
 class HintButton(OperationButton):
