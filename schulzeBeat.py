@@ -1,14 +1,14 @@
 
-
+import math
 import copy
 
-playerList = ['A','B','C','D']
-
-matrix = [  [ 4,  1,  2,  3 ],
-            ['A','C','A','C'],
-            ['B','B','D','A'],
+matrix = [ [ 2,  4,  1,  3 ],
+            ['A','B','D','D'],
+            ['B','C','A','A'],
             ['C','D','B','B'],
-            ['D','A','C','D']]
+            ['D','A','C','C']
+                                ]
+playerList = ['A','B','C','D']
 
 class PathIdentifier():
 
@@ -114,12 +114,115 @@ class SmithSetFinder():
             return min(dominantContainer, key = len) 
 
 
+class StrongestPathFinder():
 
+    @staticmethod
+    def smithSetExcluder(scoreBeatList, smithSet):
+        for score in scoreBeatList.copy():
+            if not ((set(score.keys()) <= smithSet)):
+                scoreBeatList.remove(score)
+        return scoreBeatList
 
+    @staticmethod  
+    def viableRouteFinder(node1, node2, scoreBeatList, smithSet):
+        routeList = StrongestPathFinder.routeGenerator(node1, node2, smithSet)
+        for route in routeList.copy():
+            if not StrongestPathFinder.isViable(route, scoreBeatList, smithSet):
+                routeList.remove(route)
+        return routeList
 
+    @staticmethod
+    def strongestPathFinder(node1, node2, scoreBeatList, smithSet):
+        strongestPath = []
+        routeList = StrongestPathFinder.viableRouteFinder(node1, node2, scoreBeatList, smithSet)
+        beatPath = []
+        for route in routeList:
+            weakest = StrongestPathFinder.getWeakestLink(route, scoreBeatList)
+            beatPath.append((route, weakest))
+        strongest = 0
+        for pair in beatPath:
+            if pair[1] >= strongest:
+                strongest = pair[1]
+        for pair in beatPath:
+            if pair[1] == strongest:
+                strongestPath.append(pair[0])
+        return strongestPath
 
+    @staticmethod
+    def getWeakestLink(route, scoreBeatList):
+        weakest = 0
+        for score in scoreBeatList:
+            if (route[0] in score
+                and route[-1] in score):
+                if score[route[0]] != 0:
+                    weakest = score[route[0]]
+                else: weakest = score[route[-1]]
+        for i in range(len(route)-1):
+            confront, rival = route[i], route[i+1]
+            for score in scoreBeatList:
+                if (confront in score
+                    and rival in score):
+                    if (score[confront] != 0
+                        and score[confront] < weakest):
+                        weakest = score[confront]
+                    elif (score[rival] != 0
+                        and score[rival] < weakest):
+                        weakest = score[rival]
+        return weakest
 
+    @staticmethod
+    def isViable(route, scoreBeatList, smithSet):
+        if not StrongestPathFinder.oneWayConnectable(route[-1], route[0], scoreBeatList, smithSet):
+            return False
+        for i in range(len(route)-1):
+            if not StrongestPathFinder.oneWayConnectable(route[i], route[i+1], scoreBeatList, smithSet):
+                return False
+        return True
 
-   
+    @staticmethod
+    def oneWayConnectable(node1, node2, scoreBeatList, smithSet):
+        scoreBeatList = StrongestPathFinder.smithSetExcluder(scoreBeatList, smithSet)
+        for score in scoreBeatList:
+            if (node1 in score
+                and node2 in score
+                and score[node1] != 0):
+                return True
+        return False
 
+    @staticmethod
+    def routeGenerator(node1, node2, smithSet):
+        connector = smithSet - {node1, node2}
+        maxSpace = len(smithSet) - 2
+        route = []
+        route.append([node1, node2])
+        for i in range(maxSpace):
+            space = [-1] * (i+1)
+            template = [node1] + space + [node2]
+            for _ in range(math.factorial(maxSpace)//math.factorial(maxSpace-(i+1))):
+                StrongestPathFinder.filler(template.copy(), connector, route, i)
+        return route
+
+    @staticmethod        
+    def isFull(template):
+        if -1 not in template: return True
+        return False
+
+    @staticmethod
+    def filler(template, connector, route, ind):
+        if StrongestPathFinder.isFull(template):
+            return template
+        else:
+            for joint in connector:
+                for i in range(len(template) - 1):
+                    if (template[i] == -1
+                        and joint not in template):
+                        template[i] = joint
+                        if (template not in route):
+                            if StrongestPathFinder.isFull(template):
+                                route.append(template)
+                                return template
+                            elif StrongestPathFinder.filler(template, connector, route, ind+1):
+                                return template
+                        template[i] = -1
+        return None
 
