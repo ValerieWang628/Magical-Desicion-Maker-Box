@@ -30,6 +30,19 @@ def init(data):
     loadOperationButton(data)
     data.playground = None
 
+def partialInit(data):
+    data.inPlayList = []
+    data.mouseSelectionHist = deque(maxlen = 1)
+    data.playerNode = []
+    data.playerNodeSep = data.height//len(data.playerList)
+    data.sittingPlayerLoc = {}
+    loadSittingPlayers(data)
+    data.operationButton = []
+    data.buttonNum = 4
+    data.buttonWidth = 160
+    data.buttonSep = (data.width - 4 * data.margin)//data.buttonNum + 30
+    loadOperationButton(data)
+
 def loadOperationButton(data):
     horizontalAlign = (2 * data.height - 3 * data.margin)//2 
     button1 = pgWidgets.ShowConnectionButton("Show One-Way Path", data.margin + data.buttonWidth//2, horizontalAlign, data.buttonWidth)
@@ -97,11 +110,11 @@ def drawOperationButton(canvas, data):
     mousePressedX, mousePressedY = data.mouseSelection
     for button in data.operationButton:
         if type(button) == pgWidgets.SmithSetFinderButton:
-            button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.positiveBeatScoreList, data.playerNode, data.inPlayList, data.playground, data.matrix) 
+            button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.positiveBeatScoreList, data.playerNode, data.inPlayList, data.playground, data.matrix, data.smithSolution, partialInit, data) 
         elif type(button) == pgWidgets.BeatDemoButton:
-            button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.positiveBeatScoreList, data.playerNode, data.inPlayList, data.playground, data.matrix) 
+            button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.positiveBeatScoreList, data.playerNode, data.inPlayList, data.playground, data.matrix, data.smithSolution, partialInit, data) 
         else:
-            button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.beatScoreList, data.playerNode, data.inPlayList, data.playground, data.matrix)
+            button.ifClicked(canvas, mousePressedX, mousePressedY, data.mouseSelectionHist, data.beatScoreList, data.playerNode, data.inPlayList, data.playground, data.matrix, data.smithSolution, partialInit, data)
         button.draw(canvas, mouseX, mouseY, data.playground)
 
 
@@ -161,6 +174,7 @@ def run(width, height, matrix, playerList):
     data.matrix = matrix
     data.beatScoreList = schulzeBeat.PathIdentifier().pathIdentifier(data.matrix, data.playerList)
     data.positiveBeatScoreList = schulzeBeat.PositiveBeatFinder().positiveBeatFinder(data.matrix, data.playerList)
+    data.smithSolution = schulzeBeat.SmithSetFinder().findSmithSet(data.matrix, data.playerList)
     root = Tk()
     root.title("Magic Desicion Maker Box")
     root.resizable(width=False, height=False) # prevents resizing window
