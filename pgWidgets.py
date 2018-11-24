@@ -9,14 +9,16 @@ This file will be imported in the UI_Tkinter_Playground file.
 import random
 import math
 from collections import deque
+import schulzeBeat
 
 class PlayerNode():
 
-    def __init__(self, playerName, cx, cy, r = 30):
+    def __init__(self, playerName, cx, cy, isInSmith = False, r = 30):
         self.playerName = playerName
         self.cx = cx
         self.cy = cy
         self.r = r
+        self.isInSmith = isInSmith
 
     def __eq__(self, other):
         return (isinstance(other, PlayerNode)
@@ -81,8 +83,9 @@ class PlayerNode():
                 x1, y1, x2, y2 = bestConnect[0][0], bestConnect[0][1], bestConnect[1][0], bestConnect[1][1]
                 t1, t2 = 1, 2 # trisection proportion
                 x3, y3 = (t1*x2+t2*x1)/(t1+t2), (t1*y2+t2*y1)/(t1+t2)
-                bx, by = PlayerNode.angleCalc(self.cx, self.cy, x1, y1, 20)
-                cx, cy = PlayerNode.angleCalc(other.cx, other.cy, x2, y2, -20)
+                angleOffset = 50
+                bx, by = PlayerNode.angleCalc(self.cx, self.cy, x1, y1, angleOffset)
+                cx, cy = PlayerNode.angleCalc(other.cx, other.cy, x2, y2, angleOffset * (-1))
                 x4, y4 = (t2*cx+t1*bx)/(t1+t2), (t2*cy+t1*by)/(t1+t2) 
                 twoWayPath = Path((cx, cy),(bx, by))
                 twoWayPath.draw(canvas, fill = "plum1")   
@@ -90,6 +93,34 @@ class PlayerNode():
                 beatScoreOneWay.draw(canvas)
                 beatScoreTwoWay = BeatNode(x4, y4, scoreDict[other.playerName]) 
                 beatScoreTwoWay.draw(canvas, outline = "plum1")
+
+
+    def showPositivePath(self, other, canvas, playground, positiveScoreDict):
+        assert(type(other) == PlayerNode)
+        bestConnect = None
+        shortestConnection = 10000 #magic num
+        for pointSelf in self.connector:
+            for pointOther in other.connector:
+                eucliDist = ((pointSelf[0] - pointOther[0]) ** 2 + (pointSelf[1] - pointOther[1]) ** 2) ** 0.5
+                if eucliDist <= shortestConnection:
+                    shortestConnection = eucliDist
+                    bestConnect = (pointSelf, pointOther)
+        if (bestConnect[0][0] >= playground.vertexNW[0]
+            and bestConnect[0][0] <= playground.vertexSE[0]
+            and bestConnect[1][0] >= playground.vertexNW[0]
+            and bestConnect[1][0] <= playground.vertexSE[0]
+            and bestConnect[0][1] >= playground.vertexNW[1]
+            and bestConnect[0][1] <= playground.vertexSE[1]
+            and bestConnect[1][1] >= playground.vertexNW[1]
+            and bestConnect[1][1] <= playground.vertexSE[1]):
+            connectionPath = Path(bestConnect[0], bestConnect[1])
+            connectionPath.draw(canvas, fill = "gold") 
+            t1, t2 = 1, 2
+            x1, y1, x2, y2 = bestConnect[0][0], bestConnect[0][1], bestConnect[1][0], bestConnect[1][1]
+            x3, y3 = (t1*x2+t2*x1)/(t1+t2), (t1*y2+t2*y1)/(t1+t2)
+            beatScore = BeatNode(x3, y3, positiveScoreDict[self.playerName]) 
+            beatScore.draw(canvas)
+
 
             
     
@@ -193,22 +224,62 @@ class OperationButton():
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
         canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix):
         pass
 
 
 class SmithSetFinderButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix):
         if (mouseX >= self.vertexNW[0]
-             and mouseX <= self.vertexSE[0]
-             and mouseY >= self.vertexNW[1]
-             and mouseY <= self.vertexSE[1]):
-             pass
+            and mouseX <= self.vertexSE[0]
+            and mouseY >= self.vertexNW[1]
+            and mouseY <= self.vertexSE[1]):
+            if (mouseSelectionHist == deque(maxlen = 1) 
+                and inPlayList == []):
+                ErrorPrompt("Please First Add a Player.").draw(canvas)
+            else:
+                inPlayName = [player.playerName for player in inPlayList] # extracting only attributes from objects
+                smithSet = schulzeBeat.SmithSetFinder().findSmithSet(matrix, inPlayName)
+                inPlaySet = set(inPlayName)
+                inPlaySmith = inPlaySet & smithSet
+                for playName in inPlaySmith:
+                    for player in inPlayList:
+                        if player.playerName == playName:
+                            player.isInSmith = True
+                for playerName in inPlaySet:
+                    for score in beatScoreList:
+                        if playerName in score and score[playerName] != 0:
+                            pairWisePlayer = list(score.keys())
+                            pairWisePlayer.remove(playerName)
+                            theOtherPlayer = pairWisePlayer[0]
+                            if theOtherPlayer in inPlayName:
+                                confront, rival = None, None
+                                for player in inPlayList:
+                                    if player.playerName == theOtherPlayer:
+                                        rival = player
+                                    elif player.playerName == playerName:
+                                        confront = player
+                                confront.showPositivePath(rival, canvas, playground, score)
+                ErrorPrompt("Now You Are Looking at by How Much a Winner Beats Another with Smith Set Players Highlighted.").draw(canvas)
+        else:
+            for player in inPlayList:
+                player.isInSmith = False
+
+
+class BeatDemoButton(OperationButton):
+
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix):
+        if (mouseX >= self.vertexNW[0]
+            and mouseX <= self.vertexSE[0]
+            and mouseY >= self.vertexNW[1]
+            and mouseY <= self.vertexSE[1]):
+            pass
+
 
 class ShowConnectionButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix = None):
         if (mouseX >= self.vertexNW[0]
             and mouseX <= self.vertexSE[0]
             and mouseY >= self.vertexNW[1]
