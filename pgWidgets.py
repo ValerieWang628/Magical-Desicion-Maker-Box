@@ -133,6 +133,7 @@ class PlayerNode():
                 and self.cy <= playground.vertexSE[1]):
                 canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = None, outline = "cyan", width = 1)
                 mouseSelectionHist.append(self)
+                
             else:
                 innerOffset = 200
                 self.cx = random.randint(playground.vertexNW[0] + innerOffset, playground.vertexSE[0] - innerOffset)
@@ -276,6 +277,10 @@ class BeatDemoButton(OperationButton):
             and mouseY <= self.vertexSE[1]):
             if smithSolution == set():
                 ErrorPrompt("There Is No Smith Set Available.").draw(canvas) 
+            elif len(mouseSelectionHist) == 0:
+                ErrorPrompt("Please Select Two Alternatives to See the Beat Path.").draw(canvas) 
+            elif len(mouseSelectionHist) == 1:
+                ErrorPrompt("Please Select One More Alternative to See the Beat Path.").draw(canvas) 
             elif len(smithSolution) == 1:
                 inPlayName = [player.playerName for player in inPlayList] # extracting only attributes from objects
                 smithSet = smithSolution
