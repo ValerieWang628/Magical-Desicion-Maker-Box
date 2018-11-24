@@ -37,8 +37,6 @@ class PathIdentifier():
             scoreList.append(score)
         return scoreList
 
-
-
 class PositiveBeatFinder():
 
     @staticmethod
@@ -112,7 +110,6 @@ class SmithSetFinder():
                         dominantContainer.append(tmpSmith.copy())
                         break
             return min(dominantContainer, key = len) 
-
 
 class StrongestPathFinder():
 
