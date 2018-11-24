@@ -175,6 +175,7 @@ def run(width, height, matrix, playerList):
     data.beatScoreList = schulzeBeat.PathIdentifier().pathIdentifier(data.matrix, data.playerList)
     data.positiveBeatScoreList = schulzeBeat.PositiveBeatFinder().positiveBeatFinder(data.matrix, data.playerList)
     data.smithSolution = schulzeBeat.SmithSetFinder().findSmithSet(data.matrix, data.playerList)
+    data.strongestPathList =[]
     root = Tk()
     root.title("Magic Desicion Maker Box")
     root.resizable(width=False, height=False) # prevents resizing window
@@ -203,12 +204,12 @@ def run(width, height, matrix, playerList):
 
 
 
-matrix = [  [ 4,  1,  2,  3 ],
-            ['A','C','A','C'],
-            ['B','B','D','A'],
+matrix = [ [ 2,  4,  1,  3 ],
+            ['A','B','D','D'],
+            ['B','C','A','A'],
             ['C','D','B','B'],
-            ['D','A','C','D']]
-
+            ['D','A','C','C']
+                                ]
 playerList = ['A','B','C','D']
 
 run(1200, 800, matrix, playerList)
