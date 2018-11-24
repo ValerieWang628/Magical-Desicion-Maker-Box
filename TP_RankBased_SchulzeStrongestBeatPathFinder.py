@@ -23,7 +23,6 @@ def smithSetExcluder(scoreBeatList, smithSet):
 
 def viableRouteFinder(node1, node2, scoreBeatList, smithSet):
     routeList = routeGenerator(node1, node2, smithSet)
-    # print(routeList)
     for route in routeList.copy():
         if not isViable(route, scoreBeatList, smithSet):
             routeList.remove(route)
@@ -32,16 +31,17 @@ def viableRouteFinder(node1, node2, scoreBeatList, smithSet):
 def strongestPathFinder(node1, node2, scoreBeatList, smithSet):
     strongestPath = []
     routeList = viableRouteFinder(node1, node2, scoreBeatList, smithSet)
-    # print(routeList)
-    beatPath = dict()
+    beatPath = []
     for route in routeList:
-        # print(route)
         weakest = getWeakestLink(route, scoreBeatList)
-        beatPath[weakest] = route
-    print(beatPath)
-    for key in beatPath:
-        if key == max(beatPath.keys()):
-            strongestPath.append(beatPath[key])
+        beatPath.append((route, weakest))
+    strongest = 0
+    for pair in beatPath:
+        if pair[1] >= strongest:
+            strongest = pair[1]
+    for pair in beatPath:
+        if pair[1] == strongest:
+            strongestPath.append(pair[0])
     return strongestPath
 
 
@@ -53,7 +53,6 @@ def getWeakestLink(route, scoreBeatList):
             if score[route[0]] != 0:
                 weakest = score[route[0]]
             else: weakest = score[route[-1]]
-    print(weakest)
     for i in range(len(route)-1):
         confront, rival = route[i], route[i+1]
         for score in scoreBeatList:
@@ -66,7 +65,6 @@ def getWeakestLink(route, scoreBeatList):
                     and score[rival] < weakest):
                     weakest = score[rival]
     return weakest
-
 
 
 def isViable(route, scoreBeatList, smithSet):
@@ -120,5 +118,3 @@ def filler(template, connector, route, ind):
                     template[i] = -1
     return None
 
-
-print(strongestPathFinder("B", "A", scoreBeatList, smithSet))
