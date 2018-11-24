@@ -224,13 +224,13 @@ class OperationButton():
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
         canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix, smithSolution, init, data):
         pass
 
 
 class SmithSetFinderButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix, smithSolution, init, data):
         if (mouseX >= self.vertexNW[0]
             and mouseX <= self.vertexSE[0]
             and mouseY >= self.vertexNW[1]
@@ -240,7 +240,7 @@ class SmithSetFinderButton(OperationButton):
                 ErrorPrompt("Please First Add a Player.").draw(canvas)
             else:
                 inPlayName = [player.playerName for player in inPlayList] # extracting only attributes from objects
-                smithSet = schulzeBeat.SmithSetFinder().findSmithSet(matrix, inPlayName)
+                smithSet = smithSolution
                 inPlaySet = set(inPlayName)
                 inPlaySmith = inPlaySet & smithSet
                 for playName in inPlaySmith:
@@ -269,17 +269,45 @@ class SmithSetFinderButton(OperationButton):
 
 class BeatDemoButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix, smithSolution, init, data):
         if (mouseX >= self.vertexNW[0]
             and mouseX <= self.vertexSE[0]
             and mouseY >= self.vertexNW[1]
             and mouseY <= self.vertexSE[1]):
-            pass
+            if smithSolution == set():
+                ErrorPrompt("There Is No Smith Set Available.").draw(canvas) 
+            elif len(smithSolution) == 1:
+                inPlayName = [player.playerName for player in inPlayList] # extracting only attributes from objects
+                smithSet = smithSolution
+                inPlaySet = set(inPlayName)
+                inPlaySmith = inPlaySet & smithSet
+                for playName in inPlaySmith:
+                    for player in inPlayList:
+                        if player.playerName == playName:
+                            player.isInSmith = True
+                for playerName in inPlaySet:
+                    for score in beatScoreList:
+                        if playerName in score and score[playerName] != 0:
+                            pairWisePlayer = list(score.keys())
+                            pairWisePlayer.remove(playerName)
+                            theOtherPlayer = pairWisePlayer[0]
+                            if theOtherPlayer in inPlayName:
+                                confront, rival = None, None
+                                for player in inPlayList:
+                                    if player.playerName == theOtherPlayer:
+                                        rival = player
+                                    elif player.playerName == playerName:
+                                        confront = player
+                                confront.showPositivePath(rival, canvas, playground, score)
+                ErrorPrompt("Thers Is Only One Alternative In the Smith Set. And It Is the Absolute Winner.").draw(canvas) 
+            else:
+                pass
+
 
 
 class ShowConnectionButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix = None):
+    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix, smithSolution, init, data):
         if (mouseX >= self.vertexNW[0]
             and mouseX <= self.vertexSE[0]
             and mouseY >= self.vertexNW[1]
