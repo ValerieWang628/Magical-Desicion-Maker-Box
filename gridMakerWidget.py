@@ -7,8 +7,8 @@ class GridLayer():
     @staticmethod
     def run(data):
 
-        def keyPressed(event, data, rows, cols, top):
-            if len(data.entryStorage) == rows * cols:
+        def keyPressed(event, data, top):
+            if len(data.entryStorage) == data.rows * data.cols:
                 top.destroy()
                 topsis.Topsis().run(data)
 
@@ -18,17 +18,17 @@ class GridLayer():
         top = Toplevel()
         top.title("GridMaker")
         top.bind("<Key>", lambda event:
-                    keyPressed(event, data, rows, cols, top))
-        cols = int(data.stringInput2)
-        rows = int(data.stringInput3)
+                    keyPressed(event, data, top))
+        data.cols = int(data.stringInput2)
+        data.rows = int(data.stringInput3)
         entries = []
-        for i in range(1, rows+1):
+        for i in range(1, data.rows+1):
             Label(top, text = str(i)).grid(row = i)
-        for j in range(1, cols+1):
+        for j in range(1, data.cols+1):
             Label(top, text = str(j)).grid(row = 0, column = j)
-        for i in range(rows): 
+        for i in range(data.rows): 
             newrow = []
-            for j in range(cols): 
+            for j in range(data.cols): 
                 b = Entry(top, text="",width=15)
                 b.grid(row=i+1, column=j+1)
                 b.bind("<Return>", lambda e: store(e, data.entryStorage))
