@@ -1,4 +1,4 @@
-import userInput
+
 
 
 class OperationButton():
@@ -39,16 +39,6 @@ class StartButton(OperationButton):
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
         canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 35 bold", fill = outline)
     
-    def ifClicked(self, data, canvas, mouseX, mouseY):
-        if (mouseX >= self.vertexNW[0]
-             and mouseX <= self.vertexSE[0]
-             and mouseY >= self.vertexNW[1]
-             and mouseY <= self.vertexSE[1]):
-            if data.userName == "":
-                ErrorPrompt("Please Enter Your Name First.", data.width//2, 7 * data.height//8).draw(canvas)
-            else:
-                # userInput.UserInput().run(data)
-                data.start = True
 
 class ErrorPrompt():
 
