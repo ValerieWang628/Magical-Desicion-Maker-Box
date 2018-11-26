@@ -177,6 +177,7 @@ class UserInput():
         data.entryStorage = []
         data.attribute = ['ph_a','ph_b']
         data.alternative = ['ph1', 'ph2', 'ph3']
+        data.weight = []
         canvas = Canvas(top, width=data.width, height=data.height)
         canvas.configure(bd=0, highlightthickness=0)
         canvas.pack()
