@@ -175,6 +175,8 @@ class UserInput():
         data.mouseMotion = (-1, -1)
         data.mouseSelection = (-1, -1)
         data.entryStorage = []
+        data.attribute = ['ph_a','ph_b']
+        data.alternative = ['ph1', 'ph2', 'ph3']
         canvas = Canvas(top, width=data.width, height=data.height)
         canvas.configure(bd=0, highlightthickness=0)
         canvas.pack()
