@@ -14,7 +14,6 @@ class AlternativeSpecifier():
             if len(data.alternative) == data.rows:
                 top.destroy()
                 attributeSpecifierWidget.AttributeSpecifier().run(data)
-                # topsis.Topsis().run(data)
 
         def store(e, data):
             data.alternative.append(e.widget.get())
@@ -29,4 +28,5 @@ class AlternativeSpecifier():
             b = Entry(top, text = "", width = 10)
             b.grid(row = i, column = 1)
             b.bind("<Return>", lambda e: store(e, data))
+        print(data.alternative)
 
