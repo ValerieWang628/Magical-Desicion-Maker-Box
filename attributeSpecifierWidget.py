@@ -30,3 +30,5 @@ class AttributeSpecifier():
             b.grid(row = i, column = 1)
             b.bind("<Return>", lambda e: store(e, data))
 
+
+            
