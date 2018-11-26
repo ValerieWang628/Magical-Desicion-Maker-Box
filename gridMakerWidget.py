@@ -1,6 +1,7 @@
 #cited from https://stackoverflow.com/questions/44996633/accessing-entry-widget-created-using-for-loop
 from tkinter import *
 import topsis
+import weightSumWidget
 
 class GridLayer():
 
@@ -10,7 +11,8 @@ class GridLayer():
         def keyPressed(event, data, top):
             if len(data.entryStorage) == data.rows * data.cols:
                 top.destroy()
-                topsis.Topsis().run(data)
+                # topsis.Topsis().run(data)
+                weightSumWidget.WeightSumMaker().run(data)
 
         def store(e, storageList):
             storageList.append(e.widget.get())
