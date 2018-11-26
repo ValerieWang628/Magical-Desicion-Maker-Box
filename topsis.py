@@ -1,12 +1,32 @@
 from tkinter import *
 import userInputWidget
 import gridMakerWidget
+import copy
 
 class Topsis():
 
     @staticmethod
+    def entryListOrganizer(data):
+        l = data.entryStorage
+        folded = []
+        for i in range(0, len(l), data.cols):
+            folded.append(l[i:i+data.cols])
+        attribute = [data.attribute.copy()]
+        attribute.extend(folded)
+        folded = attribute
+        # print(folded)
+        for i in range(1, len(folded)):
+            folded[i].insert(0, data.alternative[i-1])
+        ph = ["ph"]
+        ph.extend(folded[0])
+        folded[0] = ph
+        return folded
+
+    @staticmethod
     def initTopsis(data):
-        pass
+        # Topsis.entryListOrganizer(data)
+        data.entryStorage = Topsis.entryListOrganizer(data)
+        print(data.entryStorage)
     
     @staticmethod
     def loadPrompt(data):
