@@ -1,5 +1,6 @@
 from tkinter import *
 import userInputWidget
+import gridMakerWidget
 
 class UserInput():
 
@@ -48,7 +49,7 @@ class UserInput():
         data.doneButton.append(data.done3)
 
     @staticmethod
-    def mousePressed(event, data):
+    def mousePressed(event, data, top):
         data.mouseSelection = (event.x, event.y)
         if (event.x >= data.done1.vertexNW[0]
             and event.x <= data.done1.vertexSE[0]
@@ -65,6 +66,11 @@ class UserInput():
             and event.y >= data.done3.vertexNW[1]
             and event.y <= data.done3.vertexSE[1]):
             data.done3Pressed = True
+        if (data.done1Pressed
+            and data.done2Pressed
+            and data.done3Pressed):
+            top.destroy()
+            gridMakerWidget.GridLayer().run(data)
 
     @staticmethod
     def mouseTracker(event, data):
@@ -149,8 +155,8 @@ class UserInput():
             redrawAllWrapper(canvas, data)
             canvas.after(data.timerDelay, timerFiredWrapper, canvas, data)
         
-        def mousePressedWrapper(event, canvas, data):
-            UserInput.mousePressed(event, data)
+        def mousePressedWrapper(event, canvas, data, top):
+            UserInput.mousePressed(event, data, top)
             redrawAllWrapper(canvas, data)
 
         def mouseTrackerWrapper(event, data):
@@ -168,11 +174,12 @@ class UserInput():
         UserInput.initUserInput(data)
         data.mouseMotion = (-1, -1)
         data.mouseSelection = (-1, -1)
+        data.entryStorage = []
         canvas = Canvas(top, width=data.width, height=data.height)
         canvas.configure(bd=0, highlightthickness=0)
         canvas.pack()
         top.bind("<Button-1>", lambda event:
-                            mousePressedWrapper(event, canvas, data))
+                            mousePressedWrapper(event, canvas, data, top))
         top.bind("<Key>", lambda event:
                             keyPressedWrapper(event, canvas, data))
         top.bind("<Motion>", lambda event:
