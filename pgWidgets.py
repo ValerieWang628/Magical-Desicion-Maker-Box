@@ -1,11 +1,4 @@
-'''
-This file stores most of the GUI-related classes.
-Such as nodes, buttons, arrowed lines, etc.
-As for now, the hovering-color-inverse effect has been implemented.
-Later, the drag and drop, node resize, etc. will be implemented.
 
-This file will be imported in the UI_Tkinter_Playground file.
-'''
 import random
 import math
 from collections import deque
@@ -27,15 +20,18 @@ class PlayerNode():
     def draw(self, canvas, mouseX, mouseY, fill = "black", outline = "cyan"):
         self.vertexNW = (self.cx - self.r, self.cy - self.r)
         self.vertexSE = (self.cx + self.r, self.cy + self.r)
+
         self.borderN = (self.cx, self.cy - self.r)
         self.borderS = (self.cx, self.cy + self.r)
         self.borderW = (self.cx - self.r, self.cy)
         self.borderE = (self.cx + self.r, self.cy)
+
         self.borderNE = (self.cx + (self.r) * math.cos(math.pi/4), self.cy - (self.r) * math.sin(math.pi/4))
         self.borderSE = (self.cx + (self.r) * math.cos(math.pi/4), self.cy + (self.r) * math.sin(math.pi/4))
         self.borderNW = (self.cx - (self.r) * math.cos(math.pi/4), self.cy - (self.r) * math.sin(math.pi/4))
         self.borderSW = (self.cx + (self.r) * math.cos(math.pi/4), self.cy + (self.r) * math.sin(math.pi/4))
         self.connector = [self.borderE, self.borderN, self.borderS, self.borderW, self.borderNE, self.borderNW, self.borderSE, self.borderSW]
+
         eucliDist = ((mouseX - self.cx) ** 2 + (mouseY - self.cy) ** 2) ** 0.5
         if eucliDist <= self.r:
             fill, outline = outline, fill
@@ -170,6 +166,17 @@ class PlayerNode():
     def __hash__(self):
         return hash(self.getHashables())
 
+
+class SelectionRect():
+
+    def __init__(self, vertexNW, vertexSE, s):
+        self.vertexNW = vertexNW
+        self.vertexSE = vertexSE
+        self.s = s
+
+    def draw(self, canvas, fill = None, outline = "cyan"):
+        canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 1)
+
 class Path():
 
     def __init__(self, dep, dest):
@@ -225,121 +232,122 @@ class OperationButton():
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
         canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix, smithSolution, init, data):
+    def ifClicked(self, canvas, data, mouseX, mouseY, init):
         pass
 
 
 class SmithSetFinderButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix, smithSolution, init, data):
+    def ifClicked(self, canvas, data, mouseX, mouseY, init):
         if (mouseX >= self.vertexNW[0]
             and mouseX <= self.vertexSE[0]
             and mouseY >= self.vertexNW[1]
             and mouseY <= self.vertexSE[1]):
-            if (mouseSelectionHist == deque(maxlen = 1) 
-                and inPlayList == []):
+            if (data.mouseSelectionHist == deque(maxlen = 1) 
+                and data.inPlayList == []):
                 ErrorPrompt("Please First Add a Player.").draw(canvas)
             else:
-                inPlayName = [player.playerName for player in inPlayList] # extracting only attributes from objects
-                smithSet = smithSolution
+                inPlayName = [player.playerName for player in data.inPlayList] # extracting only attributes from objects
+                smithSet = data.smithSolution
                 inPlaySet = set(inPlayName)
                 inPlaySmith = inPlaySet & smithSet
                 for playName in inPlaySmith:
-                    for player in inPlayList:
+                    for player in data.inPlayList:
                         if player.playerName == playName:
                             player.isInSmith = True
                 for playerName in inPlaySet:
-                    for score in beatScoreList:
+                    for score in data.positiveBeatScoreList:
                         if playerName in score and score[playerName] != 0:
                             pairWisePlayer = list(score.keys())
                             pairWisePlayer.remove(playerName)
                             theOtherPlayer = pairWisePlayer[0]
                             if theOtherPlayer in inPlayName:
                                 confront, rival = None, None
-                                for player in inPlayList:
+                                for player in data.inPlayList:
                                     if player.playerName == theOtherPlayer:
                                         rival = player
                                     elif player.playerName == playerName:
                                         confront = player
-                                confront.showPositivePath(rival, canvas, playground, score)
+                                confront.showPositivePath(rival, canvas, data.playground, score)
                 ErrorPrompt("Now You Are Looking at by How Much a Winner Beats Another with Smith Set Players Highlighted.").draw(canvas)
         else:
-            for player in inPlayList:
+            for player in data.inPlayList:
                 player.isInSmith = False
 
 
 class BeatDemoButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix, smithSolution, init, data):
+    def ifClicked(self, canvas, data, mouseX, mouseY, init):
         if (mouseX >= self.vertexNW[0]
             and mouseX <= self.vertexSE[0]
             and mouseY >= self.vertexNW[1]
             and mouseY <= self.vertexSE[1]):
-            if smithSolution == set():
+            if data.smithSolution == set():
                 ErrorPrompt("There Is No Smith Set Available.").draw(canvas) 
-            elif len(mouseSelectionHist) == 0:
+            elif len(data.clickHist) == 0:
                 ErrorPrompt("Please Select Two Alternatives to See the Beat Path.").draw(canvas) 
-            elif len(mouseSelectionHist) == 1:
+            elif len(data.clickHist) == 1:
                 ErrorPrompt("Please Select One More Alternative to See the Beat Path.").draw(canvas) 
-            elif len(smithSolution) == 1:
-                inPlayName = [player.playerName for player in inPlayList] # extracting only attributes from objects
-                smithSet = smithSolution
+            elif len(data.smithSolution) == 1:
+                inPlayName = [player.playerName for player in data.inPlayList] # extracting only attributes from objects
+                smithSet = data.smithSolution
                 inPlaySet = set(inPlayName)
                 inPlaySmith = inPlaySet & smithSet
                 for playName in inPlaySmith:
-                    for player in inPlayList:
+                    for player in data.inPlayList:
                         if player.playerName == playName:
                             player.isInSmith = True
                 for playerName in inPlaySet:
-                    for score in beatScoreList:
+                    for score in data.positiveBeatScoreList:
                         if playerName in score and score[playerName] != 0:
                             pairWisePlayer = list(score.keys())
                             pairWisePlayer.remove(playerName)
                             theOtherPlayer = pairWisePlayer[0]
                             if theOtherPlayer in inPlayName:
                                 confront, rival = None, None
-                                for player in inPlayList:
+                                for player in data.inPlayList:
                                     if player.playerName == theOtherPlayer:
                                         rival = player
                                     elif player.playerName == playerName:
                                         confront = player
-                                confront.showPositivePath(rival, canvas, playground, score)
+                                confront.showPositivePath(rival, canvas, data.playground, score)
                 ErrorPrompt("Thers Is Only One Alternative In the Smith Set. And It Is the Absolute Winner.").draw(canvas) 
             else:
-                pass
+                path = schulzeBeat.StrongestPathFinder().strongestPathFinder(data.clickHist[-1].playerName, data.clickHist[-2].playerName, data.scoreBeatList, data.smithSolution)
+                print(path)
 
 
 
 class ShowConnectionButton(OperationButton):
 
-    def ifClicked(self, canvas, mouseX, mouseY, mouseSelectionHist, beatScoreList, playerNodeList, inPlayList, playground, matrix, smithSolution, init, data):
+    def ifClicked(self, canvas, data, mouseX, mouseY, init):
         if (mouseX >= self.vertexNW[0]
             and mouseX <= self.vertexSE[0]
             and mouseY >= self.vertexNW[1]
             and mouseY <= self.vertexSE[1]):
-            if (mouseSelectionHist == deque(maxlen = 1) 
-                and inPlayList == []):
+            if (data.mouseSelectionHist == deque(maxlen = 1) 
+                and data.inPlayList == []):
                 ErrorPrompt("Please First Add a Player.").draw(canvas)
-            elif (mouseSelectionHist == deque(maxlen = 1) 
-                and inPlayList != []):
+            elif (data.mouseSelectionHist == deque(maxlen = 1) 
+                and data.inPlayList != []):
                 ErrorPrompt("Please First Select a Player by Clicking on It.").draw(canvas)
-            elif len(inPlayList) < 2:
+            elif len(data.inPlayList) < 2:
                 ErrorPrompt("Please Drag at Least Two Players to the Playground.").draw(canvas)
             else:
-                for score in beatScoreList:
-                    selectedPlayer = mouseSelectionHist[-1]
+                for score in data.beatScoreList:
+                    selectedPlayer = data.mouseSelectionHist[-1]
                     if selectedPlayer.playerName in score:
                         pairWisePlayer = list(score.keys())
                         pairWisePlayer.remove(selectedPlayer.playerName)
                         theOtherPlayer = pairWisePlayer[0]
-                        for player in playerNodeList:
+                        for player in data.inPlayList:
                             if player.playerName == theOtherPlayer:
                                 theOtherPlayer = player
                         if self.prompt == "Show One-Way Path":
-                            selectedPlayer.showConnection(theOtherPlayer, canvas, playground, score, twoWay = False)
+                            selectedPlayer.showConnection(theOtherPlayer, canvas, data.playground, score, twoWay = False)
                             ErrorPrompt("Now You Are Looking at All One-way BeatPaths Departed from %s." % selectedPlayer.playerName).draw(canvas)
                         elif self.prompt == "Show Two-Way Path":
-                            selectedPlayer.showConnection(theOtherPlayer, canvas, playground, score, twoWay = True)
+                            selectedPlayer.showConnection(theOtherPlayer, canvas, data.playground, score, twoWay = True)
                             ErrorPrompt("Now You Are Looking at All Two-way BeatPaths Departed from %s." % selectedPlayer.playerName).draw(canvas)
 
 
