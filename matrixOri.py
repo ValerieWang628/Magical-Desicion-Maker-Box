@@ -1,7 +1,7 @@
 from tkinter import *
 import copy
 import matrixOriWidget
-# import playground
+import playground
 
 class MatrixOri():
 
@@ -23,11 +23,23 @@ class MatrixOri():
         folded[0] = blank
         folded.insert(1, weight)
         return folded
+    
+    @staticmethod
+    def fill(newTemp, ind, col, row, indList, matrix):
+        if ind not in indList:
+            newTemp[ind+2][col] = matrix[row][0]
+            indList.append(ind)
+        else:
+            MatrixOri.fill(newTemp, ind+1, col, row, indList, matrix)
 
     @staticmethod
     def entryListTransformer(data):
-        matrix = data.entryStorage
+        matrix = copy.deepcopy(data.entryStorage)
         rows, cols = len(matrix), len(matrix[0])
+        for row in range(rows):
+            for col in range(cols):
+                if matrix[row][col].isdigit():
+                    matrix[row][col] = int(matrix[row][col])
         newTemp = copy.deepcopy(matrix)
         for row in range(2,rows):
             for col in range(1,cols):
@@ -35,18 +47,16 @@ class MatrixOri():
         for col in range(1, cols):
             colList = [matrix[r][col] for r in range(len(matrix))][2:]
             colList = sorted(colList, reverse = True)
+            indList = []
             for row in range(2, rows):
                 ind = colList.index(matrix[row][col])
-                if newTemp[ind+2][col] == 0:
-                    newTemp[ind+2][col] = matrix[row][0]
-                else:
-                    newTemp[ind+3][col] = matrix[row][0]
+                MatrixOri.fill(newTemp, ind, col, row, indList, matrix)
         for row in range(2,rows):
-            newTemp[row][0] = " "
+            newTemp[row][0] = "r " + str(row-1)
         return newTemp
 
     @staticmethod
-    def initTopsis(data):
+    def initMatrix(data):
         data.entryStorage = MatrixOri.entryListOrganizer(data)
         data.entryStorageTrans = MatrixOri.entryListTransformer(data)
         data.matrixOriList = []
@@ -104,7 +114,7 @@ class MatrixOri():
 
 
     @staticmethod
-    def mousePressed(event, data):
+    def mousePressed(event, data, top):
         data.mouseSelection = (event.x, event.y)
         if (event.x >= data.transformButton.vertexNW[0]
             and event.x <= data.transformButton.vertexSE[0]
@@ -117,7 +127,8 @@ class MatrixOri():
             and event.x <= data.goRankButton.vertexSE[0]
             and event.y >= data.goRankButton.vertexNW[1]
             and event.y <= data.goRankButton.vertexSE[1]):
-            pass
+            top.destroy()
+            playground.Playground.run(data)
 
 
     @staticmethod
@@ -175,8 +186,8 @@ class MatrixOri():
             redrawAllWrapper(canvas, data)
             canvas.after(data.timerDelay, timerFiredWrapper, canvas, data)
         
-        def mousePressedWrapper(event, canvas, data):
-            MatrixOri.mousePressed(event, data)
+        def mousePressedWrapper(event, canvas, data, top):
+            MatrixOri.mousePressed(event, data, top)
             redrawAllWrapper(canvas, data)
 
         def mouseTrackerWrapper(event, data):
@@ -191,14 +202,14 @@ class MatrixOri():
         top = Toplevel()
         top.title("Matrix")
         top.geometry("1200x800+100+0")
-        MatrixOri.initTopsis(data)
+        MatrixOri.initMatrix(data)
         data.mouseMotion = (-1, -1)
         data.mouseSelection = (-1, -1)
         canvas = Canvas(top, width=data.width, height=data.height)
         canvas.configure(bd=0, highlightthickness=0)
         canvas.pack()
         top.bind("<Button-1>", lambda event:
-                            mousePressedWrapper(event, canvas, data))
+                            mousePressedWrapper(event, canvas, data, top))
         top.bind("<Key>", lambda event:
                             keyPressedWrapper(event, canvas, data))
         top.bind("<Motion>", lambda event:
