@@ -16,10 +16,13 @@ class OperationButton():
              and mouseY <= self.vertexSE[1]):
              fill, outline = outline, fill
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 3)
-        canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 15 bold", fill = outline)
+        canvas.create_text(self.cx, self.cy, text = self.prompt, font = "Helvetica 25 bold", fill = outline)
 
 
 class TransformButton(OperationButton):
+    pass
+
+class GoRankButton(OperationButton):
     pass
 
 class ErrorPrompt():
