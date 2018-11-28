@@ -1,6 +1,7 @@
 from tkinter import *
 import copy
 import matrixOriWidget
+# import playground
 
 class MatrixOri():
 
@@ -15,7 +16,7 @@ class MatrixOri():
         folded = attribute
         for i in range(1, len(folded)):
             folded[i].insert(0, data.alternative[i-1])
-        weight = ["weight"]
+        weight = ["w"]
         weight.extend(data.weight.copy())
         blank = [" "]
         blank.extend(folded[0])
@@ -25,7 +26,24 @@ class MatrixOri():
 
     @staticmethod
     def entryListTransformer(data):
-        pass
+        matrix = data.entryStorage
+        rows, cols = len(matrix), len(matrix[0])
+        newTemp = copy.deepcopy(matrix)
+        for row in range(2,rows):
+            for col in range(1,cols):
+                newTemp[row][col] = 0
+        for col in range(1, cols):
+            colList = [matrix[r][col] for r in range(len(matrix))][2:]
+            colList = sorted(colList, reverse = True)
+            for row in range(2, rows):
+                ind = colList.index(matrix[row][col])
+                if newTemp[ind+2][col] == 0:
+                    newTemp[ind+2][col] = matrix[row][0]
+                else:
+                    newTemp[ind+3][col] = matrix[row][0]
+        for row in range(2,rows):
+            newTemp[row][0] = " "
+        return newTemp
 
     @staticmethod
     def initTopsis(data):
@@ -34,6 +52,8 @@ class MatrixOri():
         data.matrixOriList = []
         data.matrixTransList = []
         MatrixOri.createOriMatrixCell(data)
+        data.transformButton = matrixOriWidget.TransformButton("Transform to Rank Based Matrix!", 300, 700, 450, 100)
+        data.matrixButton = [data.transformButton]
 
     @staticmethod
     def locateCellBounds(data, row, col, marginW, marginH, s, left = True):   
@@ -86,7 +106,19 @@ class MatrixOri():
     @staticmethod
     def mousePressed(event, data):
         data.mouseSelection = (event.x, event.y)
-        pass
+        if (event.x >= data.transformButton.vertexNW[0]
+            and event.x <= data.transformButton.vertexSE[0]
+            and event.y >= data.transformButton.vertexNW[1]
+            and event.y <= data.transformButton.vertexSE[1]):
+            MatrixOri.createTransMatrixCell(data)
+            data.goRankButton = matrixOriWidget.GoRankButton("Let's Go to Beat Path Playground!", 900, 700, 450, 100)
+            data.matrixButton.append(data.goRankButton)
+        if (event.x >= data.goRankButton.vertexNW[0]
+            and event.x <= data.goRankButton.vertexSE[0]
+            and event.y >= data.goRankButton.vertexNW[1]
+            and event.y <= data.goRankButton.vertexSE[1]):
+            pass
+
 
     @staticmethod
     def mouseTracker(event, data):
@@ -112,10 +144,17 @@ class MatrixOri():
             cell.draw(canvas)
 
     @staticmethod
+    def drawButton(canvas, data, mouseMotionX, mouseMotionY):
+        for but in data.matrixButton:
+            but.draw(canvas, mouseMotionX, mouseMotionY)
+
+    @staticmethod
     def redrawAll(canvas, data):
+        mouseMotionX, mouseMotionY = data.mouseMotion
         canvas.create_rectangle(0,0,data.width, data.height, fill = "black")
         MatrixOri.drawCellOri(canvas, data)
         MatrixOri.drawCellTrans(canvas, data)
+        MatrixOri.drawButton(canvas, data, mouseMotionX, mouseMotionY)
 
 
     @staticmethod
