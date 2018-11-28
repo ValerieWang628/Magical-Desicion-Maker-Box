@@ -1,8 +1,7 @@
 #cited from https://stackoverflow.com/questions/44996633/accessing-entry-widget-created-using-for-loop
 from tkinter import *
-import topsis
 import weightSumWidget
-import alternativeSpecifierWidget
+
 
 class GridLayer():
 
