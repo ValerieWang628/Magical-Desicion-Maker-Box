@@ -60,14 +60,31 @@ class HintButton(OperationButton):
 
 class Cell():
 
-    def __init__(self, vertexNW, vertexSE, text):
+    def __init__(self, vertexNW, vertexSE, text, row, col):
         self.vertexNW = vertexNW
         self.vertexSE = vertexSE
         self.text = text
+        self.row = row
+        self.col = col
         self.cx = (self.vertexNW[0]+self.vertexSE[0])//2
         self.cy = (self.vertexNW[1]+self.vertexSE[1])//2
 
     
-    def draw(self, canvas, fill = "black", outline = "cyan"):
+    def draw(self, mouseX, mouseY, canvas, fill = "black", outline = "cyan"):
+        if self.row >= 2 and self.col >= 1:
+            if (mouseX >= self.vertexNW[0]
+                and mouseX <= self.vertexSE[0]
+                and mouseY >= self.vertexNW[1]
+                and mouseY <= self.vertexSE[1]):
+                fill, outline = outline, fill
         canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 2)
         canvas.create_text(self.cx, self.cy, text = self.text, fill = outline, font = "Helvetica 30 bold")
+    
+
+    def ifHovered(self, mouseX, mouseY):
+        if (mouseX >= self.vertexNW[0]
+                and mouseX <= self.vertexSE[0]
+                and mouseY >= self.vertexNW[1]
+                and mouseY <= self.vertexSE[1]):
+                return True
+        return False
