@@ -57,6 +57,7 @@ class MatrixOri():
 
     @staticmethod
     def initMatrix(data):
+        data.transformed = False
         data.entryStorage = MatrixOri.entryListOrganizer(data)
         data.entryStorageTrans = MatrixOri.entryListTransformer(data)
         data.matrixOriList = []
@@ -89,7 +90,7 @@ class MatrixOri():
             for col in range(cols):
                 loc = MatrixOri.locateCellBounds(data, row, col, marginW, marginH, s)
                 vertexNW, vertexSE = (loc[0], loc[1]), (loc[2], loc[3])
-                cell = matrixOriWidget.Cell(vertexNW, vertexSE, data.entryStorage[row][col])
+                cell = matrixOriWidget.Cell(vertexNW, vertexSE, data.entryStorage[row][col], row, col)
                 data.matrixOriList.append(cell)
 
     @staticmethod
@@ -104,7 +105,7 @@ class MatrixOri():
             for col in range(cols):
                 loc = MatrixOri.locateCellBounds(data, row, col, marginW, marginH, s, left = False)
                 vertexNW, vertexSE = (loc[0], loc[1]), (loc[2], loc[3])
-                cell = matrixOriWidget.Cell(vertexNW, vertexSE, data.entryStorageTrans[row][col])
+                cell = matrixOriWidget.Cell(vertexNW, vertexSE, data.entryStorageTrans[row][col], row, col)
                 data.matrixTransList.append(cell)
 
 
@@ -121,6 +122,7 @@ class MatrixOri():
             and event.y >= data.transformButton.vertexNW[1]
             and event.y <= data.transformButton.vertexSE[1]):
             MatrixOri.createTransMatrixCell(data)
+            data.transformed = True
             data.goRankButton = matrixOriWidget.GoRankButton("Let's Go to Beat Path Playground!", 900, 700, 450, 100)
             data.matrixButton.append(data.goRankButton)
         if (event.x >= data.goRankButton.vertexNW[0]
@@ -139,20 +141,42 @@ class MatrixOri():
     def keyPressed(event, data):
         pass
 
+    
+    @staticmethod
+    def pairFinderBeforeAfter(data, row, col):
+        altName = data.entryStorage[row][0]
+        for r in range(2, len(data.entryStorageTrans)):
+            if data.entryStorageTrans[r][col] == altName:
+                return r, col
+
 
     @staticmethod
     def drawPrompt(canvas, data):
         pass
 
+
     @staticmethod
-    def drawCellOri(canvas, data):
+    def drawCell(data, canvas, mouseX, mouseY):
+        if data.transformed:
+            for cell in data.matrixOriList:
+                if (cell.row >= 2
+                    and cell.col >= 1
+                    and cell.ifHovered(mouseX, mouseY)):
+                    row, col = MatrixOri.pairFinderBeforeAfter(data, cell.row, cell.col)
+                    for cellT in data.matrixTransList:
+                        if cellT.row == row and cellT.col == col:
+                            cellT.draw(mouseX, mouseY, canvas, fill = "cyan", outline = "black")
+                cell.draw(mouseX, mouseY, canvas)
+
+    @staticmethod
+    def drawCellOri(canvas, data, mouseX, mouseY):
         for cell in data.matrixOriList:
-            cell.draw(canvas)
+            cell.draw(mouseX, mouseY, canvas)
     
     @staticmethod
-    def drawCellTrans(canvas, data):
+    def drawCellTrans(canvas, data, mouseX, mouseY):
         for cell in data.matrixTransList:
-            cell.draw(canvas)
+            cell.draw(mouseX, mouseY, canvas)
 
     @staticmethod
     def drawButton(canvas, data, mouseMotionX, mouseMotionY):
@@ -163,8 +187,9 @@ class MatrixOri():
     def redrawAll(canvas, data):
         mouseMotionX, mouseMotionY = data.mouseMotion
         canvas.create_rectangle(0,0,data.width, data.height, fill = "black")
-        MatrixOri.drawCellOri(canvas, data)
-        MatrixOri.drawCellTrans(canvas, data)
+        MatrixOri.drawCellOri(canvas, data, mouseMotionX, mouseMotionY)
+        MatrixOri.drawCellTrans(canvas, data, mouseMotionX, mouseMotionY)
+        MatrixOri.drawCell(data, canvas, mouseMotionX, mouseMotionY)
         MatrixOri.drawButton(canvas, data, mouseMotionX, mouseMotionY)
 
 
