@@ -52,8 +52,10 @@ class PlayerNode():
         return (Bx, By)
 
 
-    def showConnection(self, other, canvas, playground, scoreDict, twoWay):
+    def showConnection(self, other, canvas, data, scoreDict, twoWay):
         assert(type(other) == PlayerNode)
+        mouseMotionX, mouseMotionY = data.mouseMotion
+        playground = data.playground
         bestConnect = None
         shortestConnection = 10000 #magic num
         for pointSelf in self.connector:
@@ -73,8 +75,9 @@ class PlayerNode():
             connectionPath = Path(bestConnect[0], bestConnect[1])
             connectionPath.draw(canvas)    
             if not twoWay:
-                beatScore = BeatNode((bestConnect[0][0]+bestConnect[1][0])//2, (bestConnect[0][1]+bestConnect[1][1])//2, scoreDict[self.playerName]) 
-                beatScore.draw(canvas)
+                beatScore = BeatNode((bestConnect[0][0]+bestConnect[1][0])//2, (bestConnect[0][1]+bestConnect[1][1])//2, scoreDict[self.playerName], self.playerName, other.playerName) 
+                data.beatNodeSet.add(beatScore)
+                beatScore.draw(canvas, mouseMotionX, mouseMotionY)
             else:                
                 x1, y1, x2, y2 = bestConnect[0][0], bestConnect[0][1], bestConnect[1][0], bestConnect[1][1]
                 t1, t2 = 1, 2 # trisection proportion
@@ -85,14 +88,18 @@ class PlayerNode():
                 x4, y4 = (t2*cx+t1*bx)/(t1+t2), (t2*cy+t1*by)/(t1+t2) 
                 twoWayPath = Path((cx, cy),(bx, by))
                 twoWayPath.draw(canvas, fill = "plum1")   
-                beatScoreOneWay = BeatNode(x3, y3, scoreDict[self.playerName]) 
-                beatScoreOneWay.draw(canvas)
-                beatScoreTwoWay = BeatNode(x4, y4, scoreDict[other.playerName]) 
-                beatScoreTwoWay.draw(canvas, outline = "plum1")
+                beatScoreOneWay = BeatNode(x3, y3, scoreDict[self.playerName], self.playerName, other.playerName) 
+                data.beatNodeSet.add(beatScoreOneWay)
+                beatScoreOneWay.draw(canvas, mouseMotionX, mouseMotionY)
+                beatScoreTwoWay = BeatNode(x4, y4, scoreDict[other.playerName], other.playerName, self.playerName) 
+                data.beatNodeSet.add(beatScoreTwoWay)
+                beatScoreTwoWay.draw(canvas, mouseMotionX, mouseMotionY, outline = "plum1")
 
 
-    def showPositivePath(self, other, canvas, playground, positiveScoreDict):
+    def showPositivePath(self, other, canvas, data, positiveScoreDict):
+        playground = data.playground
         assert(type(other) == PlayerNode)
+        mouseMotionX, mouseMotionY = data.mouseMotion
         bestConnect = None
         shortestConnection = 10000 #magic num
         for pointSelf in self.connector:
@@ -114,8 +121,8 @@ class PlayerNode():
             t1, t2 = 1, 2
             x1, y1, x2, y2 = bestConnect[0][0], bestConnect[0][1], bestConnect[1][0], bestConnect[1][1]
             x3, y3 = (t1*x2+t2*x1)/(t1+t2), (t1*y2+t2*y1)/(t1+t2)
-            beatScore = BeatNode(x3, y3, positiveScoreDict[self.playerName]) 
-            beatScore.draw(canvas)
+            beatScore = BeatNode(x3, y3, positiveScoreDict[self.playerName], self.playerName, other.playerName) 
+            beatScore.draw(canvas, mouseMotionX, mouseMotionY)
 
 
             
@@ -199,17 +206,47 @@ class Path():
 
 class BeatNode():
 
-    def __init__(self, cx, cy, num, r = 20):
+    def __init__(self, cx, cy, num, dep, dest, r = 20):
         self.cx = cx
         self.cy = cy
         self.r = r
         self.num = num
+        self.dep = dep
+        self.dest = dest
         self.vertexNW = (self.cx - self.r, self.cy - self.r)
         self.vertexSE = (self.cx + self.r, self.cy + self.r)
     
-    def draw(self, canvas, outline = "cyan"):
-        canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = "black", outline = outline, width = 2)
+    def __eq__(self, other):
+        return (isinstance(other, BeatNode)
+                and self.num == other.num
+                and self.dep == other.dep
+                and self.dest == other.dest)
+    
+    def __hash__(self):
+        return hash(self.getHashables())
+
+    def getHashables(self):
+        return (self.cx, self.cy, self.r, self.num, self.dep, self.dest, self.vertexNW, self.vertexSE)
+
+    def draw(self, canvas, mouseMotionX, mouseMotionY, fill = "black", outline = "cyan"):
+        if (mouseMotionX >= self.vertexNW[0]
+             and mouseMotionX <= self.vertexSE[0]
+             and mouseMotionY >= self.vertexNW[1]
+             and mouseMotionY<= self.vertexSE[1]):
+             fill, outline = outline, fill
+        canvas.create_rectangle(self.vertexNW, self.vertexSE, fill = fill, outline = outline, width = 2)
         canvas.create_text(self.cx, self.cy, text = str(self.num), fill = outline, font = "Helvetica 20 bold")
+    
+    def ifClicked(self, mouseX, mouseY):
+        if (mouseX >= self.vertexNW[0]
+             and mouseX <= self.vertexSE[0]
+             and mouseY >= self.vertexNW[1]
+             and mouseY <= self.vertexSE[1]):
+             return True
+        return False
+    
+    def ifHovered(self, mouseX, mouseY):
+        BeatNode.ifClicked(self, mouseX, mouseY)
 
 
 class OperationButton():
@@ -268,7 +305,7 @@ class SmithSetFinderButton(OperationButton):
                                         rival = player
                                     elif player.playerName == playerName:
                                         confront = player
-                                confront.showPositivePath(rival, canvas, data.playground, score)
+                                confront.showPositivePath(rival, canvas, data, score)
                 ErrorPrompt("Now You Are Looking at by How Much a Winner Beats Another with Smith Set Players Highlighted.").draw(canvas)
         else:
             for player in data.inPlayList:
@@ -310,11 +347,14 @@ class BeatDemoButton(OperationButton):
                                         rival = player
                                     elif player.playerName == playerName:
                                         confront = player
-                                confront.showPositivePath(rival, canvas, data.playground, score)
+                                confront.showPositivePath(rival, canvas, data, score)
                 ErrorPrompt("Thers Is Only One Alternative In the Smith Set. And It Is the Absolute Winner.").draw(canvas) 
             else:
-                path = schulzeBeat.StrongestPathFinder().strongestPathFinder(data.clickHist[-1].playerName, data.clickHist[-2].playerName, data.scoreBeatList, data.smithSolution)
-                print(path)
+                path = schulzeBeat.StrongestPathFinder().strongestPathFinder(data.clickHist[-2].playerName, data.clickHist[-1].playerName, data.positiveScoreBeatList, data.smithSolution)
+                if path == []:
+                    ErrorPrompt("There is No Way that {} can reach {} and beat {}.".format(data.clickHist[-2].playerName, data.clickHist[-1].playerName, data.clickHist[-1].playerName)).draw(canvas)
+                else:
+                    print(path)
 
 
 
@@ -344,10 +384,10 @@ class ShowConnectionButton(OperationButton):
                             if player.playerName == theOtherPlayer:
                                 theOtherPlayer = player
                         if self.prompt == "Show One-Way Path":
-                            selectedPlayer.showConnection(theOtherPlayer, canvas, data.playground, score, twoWay = False)
+                            selectedPlayer.showConnection(theOtherPlayer, canvas, data, score, twoWay = False)
                             ErrorPrompt("Now You Are Looking at All One-way BeatPaths Departed from %s." % selectedPlayer.playerName).draw(canvas)
                         elif self.prompt == "Show Two-Way Path":
-                            selectedPlayer.showConnection(theOtherPlayer, canvas, data.playground, score, twoWay = True)
+                            selectedPlayer.showConnection(theOtherPlayer, canvas, data, score, twoWay = True)
                             ErrorPrompt("Now You Are Looking at All Two-way BeatPaths Departed from %s." % selectedPlayer.playerName).draw(canvas)
 
 
