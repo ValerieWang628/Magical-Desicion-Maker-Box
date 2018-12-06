@@ -3,14 +3,13 @@ import copy
 import pgWidgets
 from collections import deque
 import schulzeBeat
+import scoreCalc
 
 class Playground():
 
 
     @staticmethod
     def initPlayground(data):
-        # print("entryStorage",data.entryStorage)
-        # print("entryTrans",data.entryStorageTrans)
         data.matrix = Playground.matrixMaker(data.entryStorageTrans)
         print("matrix",data.matrix)
         data.playerList = data.alternative
@@ -33,6 +32,7 @@ class Playground():
         data.playerNodeSep = data.height//len(data.playerList)
         data.sittingPlayerLoc = {}
         Playground.loadSittingPlayers(data)
+        data.beatNodeSet = set()
         data.operationButton = []
         data.buttonNum = 4
         data.buttonWidth = 160
@@ -51,6 +51,7 @@ class Playground():
         data.playerNodeSep = data.height//len(data.playerList)
         data.sittingPlayerLoc = {}
         Playground.loadSittingPlayers(data)
+        data.beatNodeSet = set()
         data.operationButton = []
         data.buttonNum = 4
         data.buttonWidth = 160
@@ -107,6 +108,9 @@ class Playground():
                     data.clickHist.append(player)
                     selectionRect = pgWidgets.SelectionRect(player.vertexNW, player.vertexSE, player.r)
                     data.selectionRect.append(selectionRect)
+        for beatNode in data.beatNodeSet:
+            if beatNode.ifClicked(event.x, event.y):
+                scoreCalc.ScoreCalc.run(data)
         
 
 
