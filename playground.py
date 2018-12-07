@@ -11,13 +11,10 @@ class Playground():
     @staticmethod
     def initPlayground(data):
         data.matrix = Playground.matrixMaker(data.entryStorageTrans)
-        print("matrix",data.matrix)
         data.playerList = data.alternative
         data.inPlayList = []
         data.beatScoreList = schulzeBeat.PathIdentifier().pathIdentifier(data.matrix, data.playerList)
-        print("beatScoreList", data.beatScoreList)
         data.positiveBeatScoreList = schulzeBeat.PositiveBeatFinder().positiveBeatFinder(data.matrix, data.playerList)
-        print("positiveBeatList", data.positiveBeatScoreList)
         data.smithSolution = schulzeBeat.SmithSetFinder().findSmithSet(data.matrix, data.playerList)
         data.strongestPathList =[]
         data.margin = 50
@@ -33,6 +30,8 @@ class Playground():
         data.sittingPlayerLoc = {}
         Playground.loadSittingPlayers(data)
         data.beatNodeSet = set()
+        data.nodeDep = None
+        data.nodeDest = None
         data.operationButton = []
         data.buttonNum = 4
         data.buttonWidth = 160
@@ -52,6 +51,8 @@ class Playground():
         data.sittingPlayerLoc = {}
         Playground.loadSittingPlayers(data)
         data.beatNodeSet = set()
+        data.nodeDep = None
+        data.nodeDest = None
         data.operationButton = []
         data.buttonNum = 4
         data.buttonWidth = 160
@@ -110,6 +111,8 @@ class Playground():
                     data.selectionRect.append(selectionRect)
         for beatNode in data.beatNodeSet:
             if beatNode.ifClicked(event.x, event.y):
+                data.nodeDep = beatNode.dep
+                data.nodeDest = beatNode.dest
                 scoreCalc.ScoreCalc.run(data)
         
 
