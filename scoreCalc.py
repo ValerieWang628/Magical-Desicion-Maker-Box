@@ -8,11 +8,19 @@ class ScoreCalc():
     def initScoreCalc(data):
         data.newMatrixTrans = []
         ScoreCalc.createMatrixCell(data)
+        data.depStr = ""
+        data.destStr = ""
+        ScoreCalc.calcFormula(data)
+        data.calcPrompt = []
+        ScoreCalc.loadCalcPrompt(data)
 
     
     @staticmethod
-    def loadPrompt(data):
-        pass
+    def loadCalcPrompt(data):
+        depPrompt = scoreCalcWidget.CalcPrompt(data.depStr, 450, 180, 15)
+        destPrompt = scoreCalcWidget.CalcPrompt(data.destStr, 450, 220, 15)
+        data.calcPrompt.append(depPrompt)
+        data.calcPrompt.append(destPrompt)
 
     @staticmethod
     def loadInputBox(data):
@@ -35,7 +43,8 @@ class ScoreCalc():
 
     @staticmethod
     def drawPrompt(canvas, data):
-        pass
+        for prompt in data.calcPrompt:
+            prompt.draw(canvas)
 
     @staticmethod
     def locateCellBounds(data, row, col, margin, s):   
@@ -58,6 +67,29 @@ class ScoreCalc():
                 vertexNW, vertexSE = (loc[0], loc[1]), (loc[2], loc[3])
                 cell = matrixOriWidget.Cell(vertexNW, vertexSE, data.entryStorageTrans[row][col], row, col)
                 data.newMatrixTrans.append(cell)
+    
+    @staticmethod
+    def calcFormula(data):
+        depList = [data.nodeDep]
+        destList = [data.nodeDest]
+        depStr = data.nodeDep + "'s Score = "
+        destStr = data.nodeDest + "'s Score = "
+        for col in range(1, len(data.entryStorageTrans[0])):
+            for row in range(2, len(data.entryStorageTrans)):
+                if data.entryStorageTrans[row][col] == data.nodeDep:
+                    depList.append(str(data.entryStorageTrans[1][col]))
+                    destList.append("0")
+                    break
+                elif data.entryStorageTrans[row][col] == data.nodeDest:
+                    destList.append(str(data.entryStorageTrans[1][col]))
+                    depList.append("0")
+                    break
+        depRightHandSide = " +  ".join(depList[1:])
+        destRightHandSide = " +  ".join(destList[1:])
+        depStr += depRightHandSide
+        destStr += destRightHandSide
+        data.depStr, data.destStr = depStr, destStr
+
 
     @staticmethod
     def drawScoreCalcBg(canvas, data):
@@ -73,6 +105,7 @@ class ScoreCalc():
         mouseMotionX, mouseMotionY = data.mouseMotion
         ScoreCalc.drawScoreCalcBg(canvas, data)
         ScoreCalc.drawCellTrans(canvas, data, mouseMotionX, mouseMotionY)
+        ScoreCalc.drawPrompt(canvas, data)
 
 
     @staticmethod
