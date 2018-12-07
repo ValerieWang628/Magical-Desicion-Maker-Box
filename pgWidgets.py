@@ -219,8 +219,10 @@ class BeatNode():
     def __eq__(self, other):
         return (isinstance(other, BeatNode)
                 and self.num == other.num
-                and self.dep == other.dep
-                and self.dest == other.dest)
+                or (self.dep == other.dep
+                    and self.dest == other.dest)
+                or (self.dep == other.dest
+                    and self.dest == other.dep))
     
     def __hash__(self):
         return hash(self.getHashables())
@@ -350,11 +352,12 @@ class BeatDemoButton(OperationButton):
                                 confront.showPositivePath(rival, canvas, data, score)
                 ErrorPrompt("Thers Is Only One Alternative In the Smith Set. And It Is the Absolute Winner.").draw(canvas) 
             else:
-                path = schulzeBeat.StrongestPathFinder().strongestPathFinder(data.clickHist[-2].playerName, data.clickHist[-1].playerName, data.positiveScoreBeatList, data.smithSolution)
-                if path == []:
-                    ErrorPrompt("There is No Way that {} can reach {} and beat {}.".format(data.clickHist[-2].playerName, data.clickHist[-1].playerName, data.clickHist[-1].playerName)).draw(canvas)
-                else:
-                    print(path)
+                ErrorPrompt("Thank You for Your Input, Have a Wonderful Day :)")
+                # path = schulzeBeat.StrongestPathFinder().strongestPathFinder(data.clickHist[-2].playerName, data.clickHist[-1].playerName, data.positiveScoreBeatList, data.smithSolution)
+                # if path == []:
+                #     ErrorPrompt("There is No Way that {} can reach {} and beat {}.".format(data.clickHist[-2].playerName, data.clickHist[-1].playerName, data.clickHist[-1].playerName)).draw(canvas)
+                # else:
+                #     print(path)
 
 
 
