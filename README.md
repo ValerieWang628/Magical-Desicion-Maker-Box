@@ -4,7 +4,7 @@
 
 This project is called The Magic Decision Box. This is a human-computer-interactive platform developed via Python which helps users to make decisions based on managment science principles.
 
-This application is inspired by a course that I am taking this semester, called Desicion Analysis and Multi-criteria Decision Making, taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually on paper and pencil.
+This application is inspired by a course that I am taking this semester, called Decision Analysis and Multi-criteria Decision Making, taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually on paper and pencil.
 
 By inputting what decision a user wants to make, what available alternatives/options/candidates a user has, and how well each alternative is doing in terms of each attribute/feature/parameter(i.e. each feature specification of a given alternative), The Magic Desicion Box will use different algorithms to conclude a winner candidate for the user (and sometimes several if there is a tie).
 
