@@ -4,6 +4,8 @@
 
 This project is called The Magic Decision Box. This is a human-computer-interactive platform developed via Python which helps users to make decisions based on managment science principles.
 
+This application is inspired by a course that I am taking this semester, called Desicion Analysis and Multi-criteria Decision Making, taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually on paper and pencil.
+
 By inputting what decision a user wants to make, what available alternatives/options/candidates a user has, and how well each alternative is doing in terms of each attribute/feature/parameter(i.e. each feature specification of a given alternative), The Magic Desicion Box will use different algorithms to conclude a winner candidate for the user (and sometimes several if there is a tie).
 
 Also, for users who only has a rough decision in his/her mind, the box will provide some keywords scraped through the google web as possible reference for a user if s/he cannot think of a reasonable parameter at once.
@@ -20,25 +22,19 @@ The algorithms this box will be implemented upon are multi-criteria decision mak
 4. Series of Rank Based Methods, including: 
 
     Plurality Rules, IRV(Instant Run-off Voting), Borda Voting, and Schulze’s Beatpath Method.
+    
+Currently, the backend algorithms for plurality, IRV, Borda Voting and Schulze's Beatpath Method have been written and tested. Limited by the 15-112 project length, only the major part of the rank based method has been implemented on a visualized basis.
+
+Later with more time, I will try to bind more features to this app, focusing more on the interaction part so that the swing weights, TOPSIS and AHP can be implemented.
 
 ## Competitive Analysis
 
-There are plenty of decision making softwares in the market. They all tend to be enterprise-oriented and they mostly focus on corporation data integration, quick data layout, trend summary, and strategy plan generation.
-
-For example, one called SnapStrat, is a customizable SaaS platform brings data science to your strategic decisons. Features include: criteria-based scenario modelling, predictive analytics and machine learning wrapped in a user experience designed for diverse executive audiences.
-
-However, The Magic Decision Box differentiates itself in terms of several aspects.
-
-First, price. It's free. With zero monetary cost, the box is accesible to every user that has the source code.
-
-Second, simplicity. It does not tend to access s user's critical data, let alone messing around with the master data. It is designed just for a quick decision. You don't know what you should choose? Feed the box the matrix, and done.
-
-Third, education. It is not a software that spoiling a user's chance of learning. A user is able to see how decisions are made through this transparent box through interactive animations. E.g. a user can understand how a smith set is found.
+This is not a business software. It is an educational tool. It helps naive users to quickly make an algorithm-based decision, and teaches students who are interested in Management Science to solve multi-criteria decision making problems.
 
 
 ## Structural Plan
 
-The Magic Decision Box has two basic layers: the algorithms and the user interface.
+The Magic Decision Box has two basic foundations: the algorithms and the user interface.
 
 Once the user inputs data, the algorithms will transform the unstructured data into matrices and dictionaries. With calculation, a user interface will be binded to the program and allow users to play around with matrices.
 
@@ -76,16 +72,9 @@ This feature requires the button to activate the path finding functions. So the 
 
 ## Timeline Plan
 
-The developer will focus on the algorithms and user interface at the same time, separately. Although the algorithms might not all be implemented at once, the complicated algorithm will be first realized. At the same time, the user interface construction will start upon the already-prepared matrices, and later the test matrices will be replaced by real user input. Once the two parts can function at a minimal level, bilateral testing will happen interchangably.
+Currently, the Smith Set Finder part works out very well.
 
-
-By Nov 22, the user interface should be able to carry all the "playground" activities.
-
-By Nov 24, the algorithms should be able to be finished by 80%.
-
-By Nov 27, several modes and stages in the user interface should be almost complete. (The minimal requirement should be completed four chunks of algorithm-decison walk-throughs. i.e. the basic function: entering input, calculating matrix, path finding playground, quick results, should be functional.)
-
-After TP2 submission, more stages should be added to be user-friendly, such as welcome page, and consult bot selectionm, etc.
+Later, the developer will add more electorial methods, such as find condorcet winner, single elimination, etc.
 
 ## Version Control Plan
 
