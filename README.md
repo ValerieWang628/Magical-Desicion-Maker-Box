@@ -1,4 +1,4 @@
-# CMU-15112-Term-Project
+# CMU-15112-Term-Project -- The Magic Decision Box
 
 ## Project Description
 
