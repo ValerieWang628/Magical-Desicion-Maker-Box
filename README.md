@@ -4,7 +4,7 @@
 
 This project is called The Magic Decision Box. This is a human-computer-interactive platform developed via Python which helps users to make decisions based on managment science principles.
 
-This application is inspired by a course that I am taking this semester, called Decision Analysis and Multi-criteria Decision Making, taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually with paper and pencil. (Ironically, the computer program worked out so well that I now am getting obviously way more slower than before when I am manually approaching the problems. lol)
+This application is inspired by a course that I am taking this semester, called [Decision Analysis and Multi-criteria Decision Making](https://api.heinz.cmu.edu/courses_api/course_detail/94-833), taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually with paper and pencil. (Ironically, the computer program worked out so well that I now am getting obviously way more slower than before when I am manually approaching the problems. lol)
 
 By inputting what decision a user wants to make, what available alternatives/options/candidates a user has, and how well each alternative is doing in terms of each attribute/feature/parameter(i.e. each feature specification of a given alternative), The Magic Desicion Box will use different algorithms to conclude a winner candidate for the user (and sometimes several if there is a tie).
 
@@ -13,15 +13,15 @@ Also, for users who only has a rough decision in his/her mind, the box will prov
 
 The algorithms this box will be implemented upon are multi-criteria decision making methods, 
 
-1. Swing Weights for Weighted Sum Model
+1. [Swing Weights for Weighted Sum Model](http://miroslawdabrowski.com/downloads/MoV/The%20Simple%20Multi%20Attribute%20Rating%20Technique%20(SMART).pdf)
 
-2. TOPSIS (The Technique for Order of Preference by Similarity to Ideal Solution)
+2. [TOPSIS](https://en.wikipedia.org/wiki/TOPSIS) (The Technique for Order of Preference by Similarity to Ideal Solution)
 
-3. AHP (Analytical Hierarchy Process)
+3. [AHP](https://en.wikipedia.org/wiki/Analytic_hierarchy_process) (Analytical Hierarchy Process)
 
 4. Series of Rank Based Methods, including: 
 
-    Plurality Rules, IRV(Instant Run-off Voting), Borda Voting, and Schulze’s Beatpath Method.
+    [Plurality Rules](https://en.wikipedia.org/wiki/Plurality_voting), [IRV](https://en.wikipedia.org/wiki/Instant-runoff_voting)(Instant Run-off Voting), [Borda Voting](https://en.wikipedia.org/wiki/Borda_count), and [Schulze’s Beatpath Method](https://en.wikipedia.org/wiki/Schulze_method).
     
 Currently, the backend algorithms for plurality, IRV, Borda Voting and Schulze's Beatpath Method have been written and tested. Limited by the 15-112 project length, only the major part of the rank based method has been implemented on a visualized basis.
 
