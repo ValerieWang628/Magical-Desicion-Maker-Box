@@ -8,7 +8,7 @@ This project is called The Magic Decision Box. This is a human-computer-interact
 
 👉🏼Snapshot of the video demo:
 <p align="center">
-    <img src= "">
+    <img src= "https://github.com/ValerieWang628/the-magic-desicion-maker-box/blob/master/snap/videoSnap.png" width = "500" height = "313">
 <p>
 
 This application is inspired by a course that I am taking this semester, called [Decision Analysis and Multi-criteria Decision Making](https://api.heinz.cmu.edu/courses_api/course_detail/94-833), taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually with paper and pencil. (Ironically, the computer program worked out so well that I now am getting obviously way more slower than before when I am manually approaching the problems. lol)
