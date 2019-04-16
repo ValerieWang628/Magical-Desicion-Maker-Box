@@ -2,7 +2,7 @@
 
 ## Project Description
 
-This project is called The Magic Decision Box. This is a human-computer-interactive platform developed via Python which helps users to make decisions based on managment science principles.
+This project is called The Magic Decision Box. This is a human-computer-interactive platform developed via Python which helps users to make decisions based on managment science principles. This is also the term project I had during my course -- [Fundamentals of Computer Science and Programming](https://www.cs.cmu.edu/~112/). (A little update here: I got 92 out of 100 for this project. 😁)
 
 👉🏼Click [here](https://www.youtube.com/watch?v=SCq7pKkoa50) to see the simplified video demo of this project.
 
@@ -11,7 +11,7 @@ This project is called The Magic Decision Box. This is a human-computer-interact
     <img src= "https://github.com/ValerieWang628/the-magic-desicion-maker-box/blob/master/snap/videoSnap.png" width = "500" height = "313">
 <p>
 
-This application is inspired by a course that I am taking this semester, called [Decision Analysis and Multi-criteria Decision Making](https://api.heinz.cmu.edu/courses_api/course_detail/94-833), taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually with paper and pencil. (Ironically, the computer program worked out so well that I now am getting obviously way more slower than before when I am manually approaching the problems. lol)
+This application is inspired by a course that I am taking this semester, called [Decision Analysis and Multi-criteria Decision Making](https://api.heinz.cmu.edu/courses_api/course_detail/94-833), taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually with paper and pencil. (😅Ironically, the computer program worked out so well that I now am getting obviously way more slower than before when I am manually approaching the problems. lol)
 
 By inputting what decision a user wants to make, what available alternatives/options/candidates a user has, and how well each alternative is doing in terms of each attribute/feature/parameter(i.e. each feature specification of a given alternative), The Magic Desicion Box will use different algorithms to conclude a winner candidate for the user (and sometimes several if there is a tie).
 
@@ -34,6 +34,10 @@ Currently, the backend algorithms for plurality, IRV, Borda Voting and Schulze's
 
 Later with more time, I will try to bind more features to this app, focusing more on the interaction part so that the swing weights, TOPSIS and AHP can be implemented.
 
+## How to run this program
+
+All Python files here are linked internally. It is designed like a chain with one biting another's tail. Therefore, after downloading all the files in a folder, the [run.py](https://github.com/ValerieWang628/the-magic-desicion-maker-box/blob/master/Run.py) will serve as a trigger. Run this [run.py](https://github.com/ValerieWang628/the-magic-desicion-maker-box/blob/master/Run.py) file only will be enough for users to get the whole program moving.
+
 ## Competitive Analysis
 
 This is not a business software. It is an educational tool. It helps naive users to quickly make an algorithm-based decision, and teaches students who are interested in Management Science to solve multi-criteria decision making problems.
@@ -49,7 +53,7 @@ Each algorithm will be implemented in functions with the matrix passed as the ar
 
 E.g. 
 
-function for plularity rule, will be laid out as pluralityElimination(matrix).
+function for plularity rule, will be laid out as *pluralityElimination(matrix)*.
 
 And the user interface will be implemented in a object-oriented way. 
 
@@ -65,11 +69,11 @@ Classes might be created in separate python files and later imported in the tkin
 
 ## Algorithmic Plan
 
-For the algorithms, there are already some developed algorithms out there -- such as for finding the smith set, there are  Floyd–Warshall algorithm in time O(n ^ 3), Kosaraju's algorithm and Tarjan's algorithm in time O(n ^ 2).
+For the algorithms, there are already some developed algorithms out there -- such as for finding the smith set, there are  [Floyd–Warshall algorithm](https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm) in time O(n ^ 3), [Kosaraju's algorithm](https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm) and [Tarjan's algorithm](https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm) in time O(n ^ 2).
 
 However, due to the limited complexity of a use's decision, normally, a student/consultant equipped with theoretical algothm knowledge will be able to manually calculated the results on a piece of a scratch paper. Therefore, all the algorithms in this box will be implemented independently by the developer using merely 2-D lists, 2-D dictionary and sets manipulation(no Numpy/Pandas involved). The entire manipulation process strictly recreates how a human being will solve the problem.
 
-The tricky part will lie in the function building part. Since many methods involve repetitive steps, recursion is definitely going to be used. Therefore, the developer created many test boards with different scenerios for testing purposes. For example, scenerios with equivocal winners, scenerios with Condorcet criterion failure, scenerios with monotonicity criterion failure, scenerios with multiple ties, etc. The algorithms will try their best to cover all the edge cases. 
+The tricky part will lie in the function building part. Since many methods involve repetitive steps, recursion is definitely going to be used. More specifically, [backtracking](https://en.wikipedia.org/wiki/Backtracking) is the critical part of the core algorithms here. Therefore, I created many [test boards]() with different scenerios for testing purposes. For example, scenerios with equivocal winners, scenerios with Condorcet criterion failure, scenerios with monotonicity criterion failure, scenerios with multiple ties, etc. The algorithms will try their best to cover all the edge cases. 
 
 For the user interface, the developer will set sequential stages and modes for the whole GUI(Graphic User Interface) that allows different interaction function to take place such as keyPressed, mouseTracker, mousePressed, etc.
 
