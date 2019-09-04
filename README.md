@@ -38,10 +38,33 @@ Later with more time, I will try to bind more features to this app, focusing mor
 
 All Python files here are linked internally. It is designed like a chain with one biting another's tail. Therefore, after downloading all the files in a folder, the [run.py](https://github.com/ValerieWang628/the-magic-desicion-maker-box/blob/master/Run.py) will serve as a trigger. Run this [run.py](https://github.com/ValerieWang628/the-magic-desicion-maker-box/blob/master/Run.py) file only will be enough for users to get the whole program moving.
 
+## What are the steps of this software
+
+First, after running the run.py file, you will see a welcome page. Type the name in and hit 'start'. 
+
+Then, type whatever decision you are making, how many alternatives you have(the candidates that you have difficulty choosing), and how many attributes there are(the different aspects that you care about).
+
+Go and do some research on your candidates. For example, if you are choosing a car model to purchase, you might have Acura xxx model, Lexus xxx model, and Infiniti xxx model. You particularly care about the mpg (miles per gallon), the length of the car, and the price of the car. So, mpg, length, and price will be the three attributes in this decision making. Then, you go online and look for each attribute specification for each car model. The specifciation matrix will be filled up once you are done researching.
+
+Then, the app will convert your original specification matrix into a rank-based matrix. Within each attibute, the alternative with the best specification will be put in the first rank, and the second best alternative gets to be put at second, and so on. If you are confused with the rank base transformation, no worries, hover your cursor onto the cell on either matrix, and the other matrix will show where the corresponding cell is.
+
+With the matrix done, you come to the candidate playground. In this battle field, you get to see how one alternative beats another, and who is the final winner. The calculations are hidden in each score node. If you click the node, the matrix will come up and tell you how the score is derived.
+
+If you just want to get an answer, click the 'Show Smith Set' button. Winner(s) will be illuminated with a gold color.
+
+
+
 ## Competitive Analysis
 
-This is not a business software. It is an educational tool. It helps naive users to quickly make an algorithm-based decision, and teaches students who are interested in Management Science to solve multi-criteria decision making problems.
+This is not a business software. It is an educational tool. It helps users to quickly make an algorithm-based decision, and teaches students who are interested in Management Science to solve multi-criteria decision making problems in a fun way. 
 
+## Program Highlights
+
+1. Visualized Matrix Conversion: there is no exact explanation on how the matrix is converted, and this allows the users to understand the mechanism themselves. By hovering their cursors to look for corresponding cells, they will be able to figure out how a cell is placed in the other matrix.
+
+2. Interactive Panel: Users are allowed to freely click, drag and adjust their alternatives in the playground. They can twist-around the alternatives placement for a better visual presentation.
+
+3. Intuitive UI/UX: Click to select. Highlighted and squared when selected. Color reversed when hovered on. Double click to reset. Easy operations with fun.
 
 ## Structural Plan
 
