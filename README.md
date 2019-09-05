@@ -2,7 +2,7 @@
 
 ## Project Description
 
-This project is called The Magic Decision Box. This is a human-computer-interactive platform developed via Python which helps users to make decisions based on managment science principles. This is also the term project I had during my course -- [Fundamentals of Computer Science and Programming](https://www.cs.cmu.edu/~112/). (A little update here: I got 92 out of 100 for this project. 😁)
+This project is called The Magic Decision Box. This is a human-computer-interactive platform developed via Python which helps users to make decisions based on managment science principles. This is also the term project I had during my course -- [Fundamentals of Computer Science and Programming](https://www.cs.cmu.edu/~112/). 
 
 👉🏼[Click here to see the simplified video demo of this project on Youtube.](https://www.youtube.com/watch?v=SCq7pKkoa50)
 
