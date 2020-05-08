@@ -9,7 +9,7 @@ This project is called The Magical Decision Maker Box. This is an optimal soluti
 
 👉🏼Snapshot of the video demo:
 <p align="center">
-    <img src= "https://static.wixstatic.com/media/5a3935_94130e2adf2b4fbf82f9b82405c5fdc7~mv2.png/v1/fill/w_610,h_390,al_c,q_85,usm_0.66_1.00_0.01/videoSnap.webp" width = "500" height = "313">
+    <img src= "https://static.wixstatic.com/media/5a3935_94130e2adf2b4fbf82f9b82405c5fdc7~mv2.png/v1/fill/w_610,h_390,al_c,q_85,usm_0.66_1.00_0.01/videoSnap.webp" width = "610" height = "390">
 <p>
 
 ## Why did I start this project?
