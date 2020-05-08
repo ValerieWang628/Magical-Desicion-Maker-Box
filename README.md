@@ -1,3 +1,4 @@
+
 # The Magical Decision Maker Box
 
 ## What is this project about?
@@ -53,7 +54,6 @@ In my Decision Analysis class, we were taught methods below:
 With the input above, the Box will be able to come up with a matrix with the given information, transform the matrix into a rank-based one, and present results reached from different algorithms in the back end. The result will be the winner candidate(s) for the user (sometimes there are several winners if there is a tie).
 
 👇🏻Screenshot: User input matrix (left) and transformed rank-based matrix:
-
 📍Users can hover the cursor onto the grid so that the highlight mapping shows how each cell is transformed.
 <p align="center">
   <img src="https://static.wixstatic.com/media/5a3935_fe006b6eee9c499ba57ff055fd142e16~mv2.png/v1/fill/w_600,h_320,al_c,q_85,usm_0.66_1.00_0.01/matrix_PNG.webp" width="600" height="320">
@@ -62,7 +62,6 @@ With the input above, the Box will be able to come up with a matrix with the giv
 
 
 👇🏻Screenshot: The candidate battle ground:
-
 📍Users can drag the competing candidates to the main pathground, and easily arrange the positions at their own will. User actions: single click to select; drag to move nodes; double click to release nodes; drag and move to arrange positions.
 <p align="center">
   <img src="https://static.wixstatic.com/media/5a3935_06323feca3b54c38892ca8d3d7cedd8c~mv2.png/v1/fill/w_600,h_400,al_c,q_85,usm_0.66_1.00_0.01/clickndrag_PNG.webp" width="600" height="400">
@@ -72,7 +71,6 @@ With the input above, the Box will be able to come up with a matrix with the giv
 
 
 👇🏻Screenshot: Step-by-step beathpath relation:
-
 📍Select any of the candidates, and click "Show One Way Path", users can examine all the one-way relations between this particular candidate and another.
 <p align="center">
   <img src="https://static.wixstatic.com/media/5a3935_654db6db482e4d51b8c2ab722c060ca1~mv2.png/v1/fill/w_600,h_430,al_c,q_85,usm_0.66_1.00_0.01/Path1_PNG.webp" width="600" height="430">
@@ -81,7 +79,6 @@ With the input above, the Box will be able to come up with a matrix with the giv
 
 
 👇🏻Screenshot: Detailed interactable calculations:
-
 📍Select any of the score nodes here, users can check the calculation process of that particular beatpath.
 <p align="center">
   <img src="https://static.wixstatic.com/media/5a3935_e6ac9cf2d9c045108e9976cb2a25591f~mv2.png/v1/fill/w_600,h_420,al_c,q_85,usm_0.66_1.00_0.01/calc_PNG.webp" width="600" height="420">
@@ -90,7 +87,6 @@ With the input above, the Box will be able to come up with a matrix with the giv
 
 
 👇🏻Screenshot: Two-way paths for further explanation:
-
 📍Select any of the score nodes here and click "Show Two Way Path", users can check the two-way beatpaths for supplemental information.
 <p align="center">
   <img src="https://static.wixstatic.com/media/5a3935_bd2df179665f42e1949ace28eb4569f8~mv2.png/v1/fill/w_600,h_430,al_c,q_85,usm_0.66_1.00_0.01/two-way_PNG.webp" width="600" height="430">
@@ -99,7 +95,6 @@ With the input above, the Box will be able to come up with a matrix with the giv
 
 
 👇🏻Screenshot: Find the winner -- the Smith Set:
-
 📍Click "Show Smith Set", and the winner among the candidates will be highlighted in yellow/gold. Boom! The winner is here.
 <p align="center">
   <img src="https://static.wixstatic.com/media/5a3935_94130e2adf2b4fbf82f9b82405c5fdc7~mv2.png/v1/fill/w_610,h_390,al_c,q_85,usm_0.66_1.00_0.01/videoSnap.webp" width="610" height="390">
