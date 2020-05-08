@@ -1,20 +1,31 @@
-# CMU-15112-Term-Project -- The Magic Decision Box
+# The Magical Decision Maker Box
 
-## Project Description
+## What is this project about?
 
-This project is called The Magic Decision Box. This is a human-computer-interactive platform developed via Python which helps users to make decisions based on managment science principles. This is also the term project I had during my course -- [Fundamentals of Computer Science and Programming](https://www.cs.cmu.edu/~112/). The biggest highlight of this project is the gamification of boring algorithm principles, because I personally believe that, lecture is not the only way to teach -- making games to teach is also cool!!!
+This project is called The Magical Decision Maker Box. This is an optimal solution finder application developed via Python which helps users make decisions based on management science principles. This is also the term project I had during my course -- [Fundamentals of Computer Science and Programming](https://www.cs.cmu.edu/~112/). The goal of this application is to gamify the boring algorithms so that users will easily learn how to make scientific decisions, because I believe that, lecture is not the only way to teach -- making algorithms interactive and gamified is also cool!!!
 
   
 <!---👉🏼[Click here to see the simplified video demo of this project on Youtube.](https://www.youtube.com/watch?v=SCq7pKkoa50)--->
 
 👉🏼Snapshot of the video demo:
 <p align="center">
-    <img src= "https://github.com/ValerieWang628/the-magic-desicion-maker-box/blob/master/snap/videoSnap.png" width = "500" height = "313">
+    <img src= "https://static.wixstatic.com/media/5a3935_94130e2adf2b4fbf82f9b82405c5fdc7~mv2.png/v1/fill/w_610,h_390,al_c,q_85,usm_0.66_1.00_0.01/videoSnap.webp" width = "500" height = "313">
 <p>
 
-This application is inspired by a course that I am taking this semester, called [Decision Analysis and Multi-criteria Decision Making](https://api.heinz.cmu.edu/courses_api/course_detail/94-833), taught by one of the greatest professors in Carnegie Mellon University. When I was taking this course, some of my classmates got confused by the concepts so I started to think about creating a computer program to solve the problems instead of doing it manually with paper and pencil. 
+## Why did I start this project?
+This application is inspired by a course that I took in Fall 2018, called [Decision Analysis and Multi-criteria Decision Making](https://api.heinz.cmu.edu/courses_api/course_detail/94-833), taught by one of the best professors in Carnegie Mellon University. We were asked to calculate the results using paper and pencils to reproduce the methods taught in class. Many classmates of mine had huge trouble with this because the algorithms baffled them. Thus, I started to develop a computer program that allows step-by-step algorithm reproduction in drag-n-click style that allows uses to learn in their own pace. 
 
-(😅Ironically, the computer program worked out so well that I now am getting obviously way more slower than before when I am manually approaching the problems. lol)
+(😅Ironically, the computer program worked out so well that I now am getting obviously way slower than before when I was manually solving the problems. lol.)
+
+## How does this tool work?
+This tool asks for following input: 
+
+1. What decision does the user want to make? (aka. the decision subject)
+2. What choices/candidates does the user have in mind? (aka the candidates that will be competing each other)
+3. What are the attributes/features/parameters that the user care about when making this decision? 
+4. What are the specifications of each attribute of each candidate? (aka. the specification metric)
+5. What is the weight of each attribute in the user's mind? (aka. how important is an attribute, compared with each other)
+6. What are the sweet spot directions of each attribute? (aka. for each attribute, does the user want the value to be the higher the better?)
 
 By inputting what decision a user wants to make, what available alternatives/options/candidates a user has, and how well each alternative is doing in terms of each attribute/feature/parameter(i.e. each feature specification of a given alternative), The Magic Desicion Box will use different algorithms to conclude a winner candidate for the user (and sometimes several if there is a tie).
 
