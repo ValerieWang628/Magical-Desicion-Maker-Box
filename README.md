@@ -8,7 +8,7 @@ This project is called The Magical Decision Maker Box. This is an optimal soluti
   
 <!---👉🏼[Click here to see the simplified video demo of this project on Youtube.](https://www.youtube.com/watch?v=SCq7pKkoa50)--->
 
-👉🏼Snapshot of the video demo:
+👉🏼Snapshot of this application:
 <p align="center">
     <img src= "https://static.wixstatic.com/media/5a3935_94130e2adf2b4fbf82f9b82405c5fdc7~mv2.png/v1/fill/w_610,h_390,al_c,q_85,usm_0.66_1.00_0.01/videoSnap.webp" width = "610" height = "390">
 <p>
