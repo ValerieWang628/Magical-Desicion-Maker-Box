@@ -201,6 +201,219 @@ All Python files here are linked internally. It is designed like a chain with on
 
 6. For a quick answer, click the 'Show Smith Set' button. Winner(s) will be illuminated in a gold color.
 
+## Major Algorithm Execution
+
+### Borda Count
+ 
+```python
+import copy
+
+matrix = [      [ 3,  3,  2,  2 ],
+                ['A','B','C','D'],
+                ['B','C','D','A'],
+                ['C','D','A','B'],
+                ['D','A','B','C']
+                                    ]
+bordaPreference = [4,3,2,1]
+
+playerSet = {'A','B','C','D'}
+assert(len(bordaPreference) == len(matrix[0]))
+
+
+def matrix2Dtransformer(matrix, playerSet):
+    playerList = list(playerSet)
+    altMatrix = copy.deepcopy(matrix)
+    header = ["ph"] + altMatrix[0] 
+    # ph is just for placeholder to maintain the rectangular shape
+    altMatrix[0] = header
+    rows, cols = len(matrix), len(matrix[0])
+    for r in range(1,rows):
+        altMatrix[r] = [0]*len(altMatrix[r])
+        altMatrix[r].insert(0,playerList[r-1])
+    return altMatrix,playerList
+
+def bordaCount(matrix, playerSet,bordaPreference):
+    altMatrix, playerList = matrix2Dtransformer(matrix, playerSet)
+    rows, cols = len(matrix), len(matrix[0])
+    for c in range(cols):
+        for r in range(1, rows):
+            targetRow = playerList.index(matrix[r][c])
+            altMatrix[targetRow+1][c+1] = bordaPreference[r-1]
+            # to link the place with the new row index in the altMatrix
+            # then assign the corresponding rank borda score to the target
+    rows, cols = len(altMatrix), len(altMatrix[0])
+    score = dict.fromkeys(playerList, 0) 
+    for r in range(1,rows):
+        for c in range(1,cols):
+            score[altMatrix[r][0]] += altMatrix[r][c] * altMatrix[0][c]
+            # sumproduct the borda score row and the attribute weight row
+    return score
+
+
+print(bordaCount(matrix,playerSet,bordaPreference))
+
+```
+
+### Instant Run-off Elimination
+ 
+```python
+def instantRunoffElimination(matrix, score = None):
+    rows, cols = len(matrix), len(matrix[0])
+    if not score: 
+        score = dict.fromkeys(matrix[1], 0) 
+    if len(score) == 1: return list(score.keys())[0]
+    for k in score: score[k] = 0
+    for c in range(cols):
+        for r in range(1,rows):
+            if matrix[r][c] in score:
+                score[matrix[r][c]] += matrix[0][c]
+                break
+
+    for player in score:
+        if score[player] >= sum(score.values()) * 0.5:
+            return max(score, key=score.get)
+
+    weakest = min(score.values())
+    for player in list(score):
+        if score[player] == weakest:
+            score.pop(player)
+    if score == dict(): return "All Tie"
+    if len(score) == 1: return list(score.keys())[0]
+    return instantRunoffElimination(matrix, score)
+
+print(instantRunoffElimination(matrix))
+```
+
+### Plurality
+```python
+def pluralityElimination(matrix):
+    rows, cols = len(matrix), len(matrix[0])
+    score = dict.fromkeys(matrix[1], 0) 
+    for c in range(cols):
+        for r in range(1,rows):
+            if matrix[r][c] in score:
+                score[matrix[r][c]] += matrix[0][c]
+                break
+    maximum = max(score.values())
+    for player in list(score):
+        if score[player] != maximum:
+            score.pop(player)
+    return list(score.keys())
+
+print(pluralityElimination(matrix))
+```
+
+### Schulze Beatpath Method
+```python
+import copy
+
+playerList = ['B','C','D']
+
+matrix = [  [ 4,  1,  2,  3 ],
+            ['A','C','A','C'],
+            ['B','B','D','A'],
+            ['C','D','B','B'],
+            ['D','A','C','D']
+                                    ]
+
+def pathIdentifier(matrix, playerList):
+    '''This is a helper func, calculating all two-way paths,
+       later used in the smithSetFinder func. '''
+    combSet = set() # initializing an empty set for all combinations
+    for i in range(len(playerList)):
+        for j in range(i+1,len(playerList)):
+            combSet.add((playerList[i], playerList[j]))
+    rows, cols = len(matrix), len(matrix[0])
+    scoreList = []
+    for pair in combSet:
+        score = dict.fromkeys(pair, 0)
+        for player in pair:
+            for c in range(cols):
+                for r in range(1,rows):
+                    if matrix[r][c] == player:
+                        score[player] += matrix[0][c]
+                        break
+                    if matrix[r][c] in pair:
+                        score[matrix[r][c]] += matrix[0][c]
+                        break
+            break
+        scoreList.append(score)
+    return scoreList, combSet
+
+def positiveBeatFinder(matrix, playerList):
+    '''this is a helper func to only count the winner in the
+        pairwise battle'''
+    if len(playerList) <= 1: raise Exception('Start with at least two players.')
+    scoreList, combSet = pathIdentifier(matrix, playerList)
+    scoreBeatList = []
+    for score in scoreList:
+        scoreBeat = score.copy()
+        for player in scoreBeat:
+            # ties get 0 for both direction
+            if score[player] == max(score.values()):
+                scoreBeat[player] -= sorted(score.values())[0]
+            else: scoreBeat[player] = 0
+        scoreBeatList.append(scoreBeat)
+    return scoreBeatList
+
+
+print(positiveBeatFinder(matrix,playerList))
+
+def underdogOverriderFinder(matrix,playerList):
+    '''This is a helper func to identify the all-time loser, 
+        and all-time winner.
+        An all-time loser will never show up in smith set.
+        Eliminate underdog first.
+        An all-time winner is the smith set itself.
+        Most of the time there might not be an all-time winner and loser.'''
+    playerSet = set(playerList)
+    scoreBeatList = positiveBeatFinder(matrix,playerList)
+    atLeastOneWin, atLeastOneLose = set(),set()
+    for scoreBeat in scoreBeatList:
+        for player in scoreBeat:
+            if scoreBeat[player] != 0:
+                atLeastOneWin.add(player)
+            else: atLeastOneLose.add(player)
+    underdogSet = playerSet - atLeastOneWin
+    overriderSet = playerSet - atLeastOneLose
+    return underdogSet, overriderSet, scoreBeatList
+
+def isDominantSet(tmpSmith, playerSet, scoreBeatList):
+    '''For every player in a smith-suspicious set,
+        if the player is defeated by players outside the set,
+        this set cannot be Smith set.'''
+    overflowSet = playerSet - tmpSmith # outside the smith-suspicious set
+    for scoreBeat in scoreBeatList:
+        for player in scoreBeat:
+            if (player in tmpSmith
+                and scoreBeat[player] == 0 # gets defeated
+                and max(scoreBeat, key = scoreBeat.get) in overflowSet):
+                return False
+    return True
+
+
+
+def smithSetFinder(matrix, playerList):
+    '''this func uses the positive defeat score to eliminate losers
+        to get the smallest dominating set, aka: the smith set '''
+    playerSet = set(playerList)
+    underdogSet, overriderSet, scoreBeatList = underdogOverriderFinder(matrix,playerList)
+    if overriderSet != set(): return overriderSet
+    else:
+        playerSet -= underdogSet
+        dominantContainer = []
+        playerList = list(playerSet) 
+        for i in range(len(playerList)):
+            tmpSmith = set()
+            for player in playerList[i:]:
+            # this guarantees that the player will never be visited twice
+                tmpSmith.add(player)
+                if isDominantSet(tmpSmith,playerSet,scoreBeatList):
+                    dominantContainer.append(tmpSmith.copy())
+                    break
+        return min(dominantContainer, key = len) # get the smallest set
+```
+
 ## Future scope
 
 I plan to further expand the algorithms and methods as there are still a lot of interesting decision-making systems out there.
